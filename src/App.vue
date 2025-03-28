@@ -58,6 +58,8 @@ if (token) {
     <div class="wrapper">
       <nav v-if="isAuthenticated">
         <RouterLink to="/">Inicio</RouterLink>
+        <RouterLink to="/sucursales">Sucursales</RouterLink>
+
         <button @click="logout">Cerrar sesión</button>
       </nav>
     </div>
@@ -92,10 +94,6 @@ if (token) {
         </button>
         <p v-if="error" class="error-message">{{ error }}</p>
       </form>
-    </div>
-
-    <div v-if="isAuthenticated">
-      <ListSucursales />
     </div>
   </main>
 
