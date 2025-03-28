@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router'
 import api from './services/api.ts'
-import ListSucursales from './modules/ListSucursales.vue'
+import ListSucursales from './modules/sucursal/ListSucursales.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -41,7 +41,7 @@ const logout = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('user')
   isAuthenticated.value = false
-  router.go(0) // Recargar la página
+  router.push({ name: 'home' }) // Recargar la página
 }
 
 // Verificar autenticación al cargar
@@ -58,7 +58,7 @@ if (token) {
     <div class="wrapper">
       <nav v-if="isAuthenticated">
         <RouterLink to="/">Inicio</RouterLink>
-        <RouterLink to="/sucursales">Sucursales</RouterLink>
+        <RouterLink to="/sucursales">Listado de Sucursales</RouterLink>
 
         <button @click="logout">Cerrar sesión</button>
       </nav>
