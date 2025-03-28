@@ -5,7 +5,6 @@ import api from './services/api.ts'
 
 const router = useRouter()
 const isAuthenticated = ref(false)
-const showLogin = ref(true)
 
 const loginForm = ref({
   email: '',
@@ -61,8 +60,6 @@ if (token) {
 
 <template>
   <header>
-
-    
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
