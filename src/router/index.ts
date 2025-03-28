@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ListSucursales from '@/modules/ListSucursales.vue'
-import CreateSucursal from '@/modules/CreateSucursal.vue'
+import ListSucursales from '@/modules/sucursal/ListSucursales.vue'
+import CreateSucursal from '@/modules/sucursal/CreateSucursal.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,9 +25,9 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 'ADMIN' },
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue'),
+      path: '/sucursales/:id',
+      name: 'sucursal-detail',
+      component: () => import('@/modules/sucursal/DetailSucursal.vue'),
       meta: { requiresAuth: true },
     },
   ],
