@@ -94,6 +94,7 @@ const goBack = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-direction: column;
   margin-bottom: 2rem;
 }
 
