@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router'
 import api from './services/api.ts'
+import ListSucursales from './modules/ListSucursales.vue'
 
 const router = useRouter()
+const route = useRoute()
 const isAuthenticated = ref(false)
 
 const loginForm = ref({
@@ -11,7 +13,6 @@ const loginForm = ref({
   password: '',
 })
 
-const sucursales = ref([])
 const loading = ref(false)
 const error = ref('')
 
@@ -27,7 +28,6 @@ const handleLogin = async () => {
     localStorage.setItem('token', response.data.access_token)
     localStorage.setItem('user', JSON.stringify(response.data.user))
     isAuthenticated.value = true
-    await fetchSucursales()
     router.push('/')
   } catch (err) {
     error.value = 'Credenciales incorrectas'
@@ -37,24 +37,17 @@ const handleLogin = async () => {
   }
 }
 
-const fetchSucursales = async () => {
-  try {
-    loading.value = true
-    const response = await api.get('/sucursales')
-    sucursales.value = response.data
-  } catch (err) {
-    error.value = 'Error al cargar sucursales'
-    console.error('Error fetching sucursales:', err)
-  } finally {
-    loading.value = false
-  }
+const logout = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  isAuthenticated.value = false
+  router.go(0) // Recargar la página
 }
 
 // Verificar autenticación al cargar
 const token = localStorage.getItem('token')
 if (token) {
   isAuthenticated.value = true
-  fetchSucursales()
 }
 </script>
 
@@ -65,19 +58,7 @@ if (token) {
     <div class="wrapper">
       <nav v-if="isAuthenticated">
         <RouterLink to="/">Inicio</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <button
-          @click="
-            () => {
-              localStorage.removeItem('token')
-              localStorage.removeItem('user')
-              isAuthenticated = false
-              router.push('/')
-            }
-          "
-        >
-          Cerrar sesión
-        </button>
+        <button @click="logout">Cerrar sesión</button>
       </nav>
     </div>
   </header>
@@ -114,16 +95,7 @@ if (token) {
     </div>
 
     <div v-if="isAuthenticated">
-      <h1>Sucursales</h1>
-      <div v-if="loading && sucursales.length === 0">Cargando sucursales...</div>
-      <div v-else-if="sucursales.length > 0" class="sucursales-grid">
-        <div v-for="sucursal in sucursales" :key="sucursal.id" class="sucursal-card">
-          <h3>{{ sucursal.nombre }}</h3>
-          <p>{{ sucursal.direccion }}</p>
-          <p>Teléfono: {{ sucursal.telefono }}</p>
-        </div>
-      </div>
-      <div v-else>No hay sucursales disponibles</div>
+      <ListSucursales />
     </div>
   </main>
 
@@ -228,13 +200,6 @@ button[type='submit']:disabled {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   margin-top: 2rem;
-}
-
-.sucursal-card {
-  background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 @media (min-width: 1024px) {

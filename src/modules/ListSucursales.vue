@@ -30,11 +30,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="sucursales-container">
-    <div class="header">
-      <h1>Listado de Sucursales</h1>
-      <button @click="goToCreate" class="create-button">Crear Nueva Sucursal</button>
-    </div>
+  <div class="">
+    <h1>Listado de Sucursales</h1>
+    <button @click="goToCreate" class="create-button">Crear Nueva Sucursal</button>
 
     <div v-if="loading && sucursales.length === 0" class="loading">Cargando sucursales...</div>
 
@@ -84,7 +82,6 @@ onMounted(() => {
 }
 
 .sucursal-card {
-  background: #ffffff;
   border: 1px solid #eaeaea;
   border-radius: 8px;
   padding: 1.5rem;
