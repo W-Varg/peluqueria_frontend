@@ -16,11 +16,7 @@ const empleados = ref<any[]>([])
 const loading = ref(false)
 const error = ref('')
 const isEditing = ref(false)
-const editForm = ref({
-  nombre: '',
-  direccion: '',
-  telefono: '',
-})
+const editForm = ref({ nombre: '', direccion: '', telefono: '' })
 
 const fetchData = async () => {
   try {
