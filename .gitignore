@@ -28,3 +28,9 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+*.env
+components.d.ts
+src/auto-imports.d.ts
+.eslintrc-auto-import.json
+vite.config.ts.timestamp-*.mjs

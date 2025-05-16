@@ -1,19 +1,37 @@
 <script setup lang="ts">
-import { getSucursales } from '@/services/sucursal.api'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
+import { getSucursales } from '@/services/sucursal.api'
+
+interface Sucursal {
+  id: number;
+  nombre: string;
+  direccion: string;
+  telefono: string;
+}
 
 const router = useRouter()
-const sucursales = ref([])
+const toast = useToast()
+
+const sucursales = ref<Sucursal[]>([])
 const loading = ref(false)
-const error = ref('')
+const selectedSucursal = ref<Sucursal | null>(null)
+const filters = ref({
+  global: { value: null, matchMode: 'contains' }
+})
 
 const fetchSucursales = async () => {
   try {
     loading.value = true
     sucursales.value = await getSucursales()
   } catch (err) {
-    error.value = 'Error al cargar sucursales'
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Error al cargar las sucursales',
+      life: 3000
+    })
     console.error('Error:', err)
   } finally {
     loading.value = false
@@ -28,48 +46,60 @@ const viewDetail = (id: number) => {
   router.push(`/sucursales/${id}`)
 }
 
+const onRowSelect = (event: { data: Sucursal }) => {
+  viewDetail(event.data.id)
+}
+
 onMounted(() => {
   fetchSucursales()
 })
 </script>
 
 <template>
-  <div class="sucursales-container">
-    <div class="header">
-      <h1>Listado de Sucursales</h1>
-      <button @click="goToCreate" class="create-button">+ Nueva Sucursal</button>
-    </div>
+  <div class="container mx-auto p-4">
+    <DataTable
+      :value="sucursales"
+      :paginator="true"
+      :rows="10"
+      :loading="loading"
+      :filters="filters"
+      filterDisplay="menu"
+      :globalFilterFields="['nombre', 'direccion', 'telefono']"
+      responsiveLayout="scroll"
+      v-model:selection="selectedSucursal"
+      selectionMode="single"
+      @rowSelect="onRowSelect"
+    >
+      <template #header>
+        <div class="flex justify-between items-center">
+          <span class="text-xl text-900 font-bold">Sucursales</span>
+          <div class="flex items-center gap-2">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search" />
+              <InputText v-model="filters.global.value" placeholder="Buscar..." />
+            </span>
+            <Button label="Nueva Sucursal" icon="pi pi-plus" @click="goToCreate" />
+          </div>
+        </div>
+      </template>
 
-    <div v-if="loading && sucursales.length === 0" class="loading">Cargando sucursales...</div>
+      <Column field="nombre" header="Nombre" sortable></Column>
+      <Column field="direccion" header="Dirección" sortable></Column>
+      <Column field="telefono" header="Teléfono"></Column>
+      <Column header="Acciones" :exportable="false" style="min-width:8rem">
+        <template #body="slotProps">
+          <Button
+            icon="pi pi-eye"
+            outlined
+            rounded
+            class="mr-2"
+            @click="viewDetail(slotProps.data.id)"
+          />
+        </template>
+      </Column>
+    </DataTable>
 
-    <div v-else-if="error" class="error-message">
-      {{ error }}
-    </div>
-
-    <div v-else-if="sucursales.length > 0" class="table-container">
-      <table class="sucursales-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Dirección</th>
-            <th>Teléfono</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="sucursal in sucursales" :key="sucursal.id">
-            <td>{{ sucursal.nombre }}</td>
-            <td>{{ sucursal.direccion }}</td>
-            <td>{{ sucursal.telefono }}</td>
-            <td>
-              <button @click="viewDetail(sucursal.id)" class="detail-button">Ver Detalle</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div v-else class="empty-state">No hay sucursales registradas</div>
+    <Toast />
   </div>
 </template>
 
