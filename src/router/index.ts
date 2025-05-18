@@ -2,18 +2,38 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ListSucursales from '@/modules/sucursal/ListSucursales.vue'
 import CreateSucursal from '@/modules/sucursal/CreateSucursal.vue'
 import ClienteView from '@/views/ClienteView.vue'
+import AppLayout from '../layout/AppLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect: '/clientes'
+      component: AppLayout,
+      children: [
+        {
+          path: '/',
+          name: 'e-commerce',
+          meta: {
+            breadcrumb: ['E-Commerce Dashboard'],
+          },
+          component: () => import('../views/pages/Empty.vue'),
+        },
+        {
+          path: '/pages/empty',
+          name: 'empty',
+          component: () => import('../views/pages/Empty.vue'),
+        },
+      ],
+    },
+    {
+      path: '/',
+      redirect: '/clientes',
     },
     {
       path: '/clientes',
       name: 'clientes',
-      component: ClienteView
+      component: ClienteView,
     },
     {
       path: '/sucursales',
