@@ -4,7 +4,6 @@ import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import type { Cliente, ClienteCreate } from '@/interfaces/Cliente';
 import { ClienteService } from '@/services/ClienteService';
-import ClienteTable from './ClienteTable.vue';
 import ClienteForm from './ClienteForm.vue';
 
 const confirm = useConfirm();
@@ -102,14 +101,63 @@ const closeDialog = () => {
   selectedCliente.value = undefined;
 };
 
+const filters = ref({
+  global: { value: null, matchMode: 'contains' },
+});
+
+const getSeverity = (estado: boolean) => {
+  return estado ? 'success' : 'danger';
+};
+
 onMounted(() => {
   loadClientes();
 });
 </script>
 
 <template>
-  <div class="container mx-auto p-4">
-    <ClienteTable :clientes="clientes" :loading="loading" @nuevo="handleNuevo" @editar="handleEditar" @eliminar="handleEliminar" />
+  <div class="card">
+    <DataTable
+      :value="clientes"
+      :paginator="true"
+      :rows="10"
+      :loading="loading"
+      :filters="filters"
+      filterDisplay="menu"
+      :globalFilterFields="['nombre', 'apellido', 'email', 'telefono']"
+      responsiveLayout="scroll"
+    >
+      <template #header>
+        <div class="flex justify-between items-center">
+          <span class="text-xl text-900 font-bold">Clientes</span>
+          <div class="flex items-center gap-2">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search" />
+              <InputText v-model="filters.global.value" placeholder="Buscar..." />
+            </span>
+            <Button label="Nuevo Cliente" icon="pi pi-plus" @click="handleNuevo" />
+          </div>
+        </div>
+      </template>
+
+      <Column field="_nombre" header="Nombre" sortable></Column>
+      <Column field="_email" header="Email" sortable></Column>
+      <Column field="_telefono" header="telefono" sortable></Column>
+      <Column field="_estado" header="estado">
+        <template #body="slotProps">
+          <Tag :value="slotProps.data._estado ? 'Activo' : 'Inactivo'" :severity="getSeverity(slotProps.data._estado)" />
+        </template>
+      </Column>
+      <Column field="_visitas" header="visitas"></Column>
+      <Column field="_ultimaVisita" header="ultima Visita"></Column>
+      <Column header="Acciones" :exportable="false" style="min-width: 8rem">
+        <template #body="slotProps">
+          <div class="flex items-center gap-2">
+            <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="handleEditar(slotProps.data)" />
+            <Button icon="pi pi-trash" outlined rounded severity="danger" @click="handleEliminar(slotProps.data)" />
+          </div>
+        </template>
+      </Column>
+    </DataTable>
 
     <ClienteForm :visible="dialogVisible" :cliente="selectedCliente" :loading="saving" @close="closeDialog" @submit="handleSubmit" />
 

@@ -33,17 +33,15 @@
   </div>
 </template>
 
-<script setup>
-const props = defineProps({
+<script setup lang="ts">
+defineProps({
   empleado: {
     type: Object,
     required: true,
   },
 });
 
-const emit = defineEmits(['close']);
-
-const getSeverity = (estado) => {
+const getSeverity = (estado: boolean) => {
   return estado ? 'success' : 'danger';
 };
 </script>

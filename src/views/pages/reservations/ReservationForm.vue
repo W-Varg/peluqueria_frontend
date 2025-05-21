@@ -4,7 +4,7 @@ import { useToast } from 'primevue/usetoast';
 import { ReservationService } from '@/service/ReservationService';
 import { type Reservation, EstadoReserva } from '@/types/reservation';
 import { ClienteService } from '@/service/ClienteService';
-import { ServicioService } from '@/service/ServicioService';
+import { CrudService } from '@/service/ServicioService';
 
 const toast = useToast();
 const visible = ref(false);
@@ -33,7 +33,7 @@ const loadClientes = async () => {
 
 const loadServicios = async () => {
   try {
-    const data = await ServicioService.getServicios();
+    const data = await CrudService.getServices();
     servicios.value = data;
   } catch (error) {
     console.error('Error al cargar servicios:', error);
@@ -170,12 +170,7 @@ defineExpose({
 
     <div class="field">
       <label for="hora">Hora</label>
-      <Calendar
-        id="hora"
-        v-model="reservation.hora"
-        :timeOnly="true"
-        :class="{ 'p-invalid': submitted && !reservation.hora }"
-      />
+      <Calendar id="hora" v-model="reservation.hora" :timeOnly="true" :class="{ 'p-invalid': submitted && !reservation.hora }" />
       <small class="p-error" v-if="submitted && !reservation.hora">Hora es requerida.</small>
     </div>
 
@@ -192,19 +187,8 @@ defineExpose({
     </div>
 
     <template #footer>
-      <Button
-        label="Cancelar"
-        icon="pi pi-times"
-        text
-        @click="hideDialog"
-        :disabled="loading"
-      />
-      <Button
-        label="Guardar"
-        icon="pi pi-check"
-        @click="saveReservation"
-        :loading="loading"
-      />
+      <Button label="Cancelar" icon="pi pi-times" text @click="hideDialog" :disabled="loading" />
+      <Button label="Guardar" icon="pi pi-check" @click="saveReservation" :loading="loading" />
     </template>
   </Dialog>
 </template>
@@ -213,4 +197,4 @@ defineExpose({
 .field {
   margin-bottom: 1.5rem;
 }
-</style> 
+</style>

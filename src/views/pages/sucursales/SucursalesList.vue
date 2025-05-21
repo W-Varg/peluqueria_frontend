@@ -122,7 +122,7 @@ const deleteSucursal = async () => {
     </DataTable>
   </div>
 
-  <SucursalForm ref="refSucursalForm" @sucursal-saved="handleSucursalSaved" />
+  <SucursalForm ref="refSucursalForm" @saved="handleSucursalSaved" />
 
   <!-- Dialog para confirmar eliminación de una sucursal -->
   <Dialog v-model:visible="deleteSucursalDialog" :style="{ width: '450px' }" header="Confirmar" :modal="true">

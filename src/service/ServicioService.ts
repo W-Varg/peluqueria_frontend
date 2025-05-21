@@ -1,3 +1,4 @@
+import type { ServicioDto } from '@/types/servicio';
 import axios from 'axios';
 
 export const CrudService = {
@@ -8,12 +9,12 @@ export const CrudService = {
     return response.data;
   },
 
-  async createServices(sucursal: any) {
+  async createServices(sucursal: ServicioDto) {
     const response = await axios.post(this.baseURL, sucursal);
     return response.data;
   },
 
-  async updateServices(id: number, sucursal: any) {
+  async updateServices(id: number, sucursal: ServicioDto) {
     const response = await axios.patch(`${this.baseURL}/${id}`, sucursal);
     return response.data;
   },

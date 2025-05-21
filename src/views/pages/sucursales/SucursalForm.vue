@@ -25,9 +25,7 @@ const { value: nombre } = useField<string>('nombre');
 const { value: direccion } = useField<string>('direccion');
 const { value: telefono } = useField<string>('telefono');
 
-const emit = defineEmits<{
-  (e: 'sucursal-saved', sucursal: Sucursal): void;
-}>();
+const emit = defineEmits(['saved']);
 
 const openDialog = (item: Sucursal | null = null) => {
   if (item) {
@@ -51,7 +49,7 @@ const onSubmit = handleSubmit(async (formData) => {
       result = await SucursalService.createSucursal(formData);
       toast.add({ severity: 'success', summary: 'Éxito', detail: 'Sucursal Creada', life: 3000 });
     }
-    emit('sucursal-saved', result);
+    emit('saved', result);
 
     hideDialog();
   } catch (error: unknown) {
