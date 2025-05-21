@@ -1,39 +1,60 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import ListSucursales from '@/modules/sucursal/ListSucursales.vue'
-import CreateSucursal from '@/modules/sucursal/CreateSucursal.vue'
-import ClienteView from '../views/ClienteView.vue'
-import AppLayout from '../layout/AppLayout.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+// import ClienteView from '../views/ClienteView.vue';
+import AppLayout from '../layout/AppLayout.vue';
+import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/admin',
       component: AppLayout,
+      meta: { requiresAuth: true },
       children: [
         {
-          path: '/',
-          name: 'e-commerce',
+          path: '',
+          name: 'admin-dashboard',
           meta: {
-            breadcrumb: ['E-Commerce Dashboard'],
+            breadcrumb: ['Dashboard'],
+            requiresAuth: true,
           },
-          component: () => import('../views/pages/Empty.vue'),
+          component: () => import('../views/pages/Dashboard.vue'),
         },
+        {
+          path: 'sucursales',
+          name: 'admin-sucursales',
+          meta: {
+            breadcrumb: ['Gestión de Sucursales'],
+            requiresAuth: true,
+            role: 'ADMIN',
+          },
+          component: () => import('../views/pages/sucursales/SucursalesList.vue'),
+        },
+
+        // {
+        //   path: '/sucursales/:id',
+        //   name: 'sucursal-detail',
+        //   component: () => import('@/modules/sucursal/DetailSucursal.vue'),
+        //   meta: { requiresAuth: true },
+        // },
+        /* ------------------------------------------------------------------------------------------------------------------ */
         {
           path: '/pages/empty',
           name: 'empty',
+          meta: { requiresAuth: true },
           component: () => import('../views/pages/Empty.vue'),
         },
         {
           path: '/pages/crud',
           name: 'crud',
+          meta: { requiresAuth: true },
           component: () => import('../views/pages/Crud.vue'),
         },
       ],
     },
     /* --------------------------------------------------- start auth --------------------------------------------------- */
     {
-      path: '/landing',
+      path: '/',
       name: 'landing',
       component: () => import('../views/pages/Landing.vue'),
     },
@@ -42,7 +63,6 @@ const router = createRouter({
       name: 'notfound',
       component: () => import('../views/pages/NotFound.vue'),
     },
-
     {
       path: '/auth/login',
       name: 'login',
@@ -63,48 +83,42 @@ const router = createRouter({
       name: 'register',
       component: () => import('../views/pages/auth/Register.vue'),
     },
-    /* ---------------------------------------------------- end auth ---------------------------------------------------- */
-    {
-      path: '/',
-      redirect: '/clientes',
-    },
-    {
-      path: '/clientes',
-      name: 'clientes',
-      component: ClienteView,
-    },
-    {
-      path: '/sucursales',
-      name: 'sucursales',
-      component: ListSucursales,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/sucursales/create',
-      name: 'create-sucursal',
-      component: CreateSucursal,
-      meta: { requiresAuth: true, role: 'ADMIN' },
-    },
-    {
-      path: '/sucursales/:id',
-      name: 'sucursal-detail',
-      component: () => import('@/modules/sucursal/DetailSucursal.vue'),
-      meta: { requiresAuth: true },
-    },
   ],
-})
+});
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('token')
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const authStore = useAuthStore();
+  const isAuthenticated = authStore.isAuthenticated;
+  const isAdmin = authStore.isAdmin;
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/')
-  } else if (to.meta.role && user.rol !== to.meta.role) {
-    next('/sucursales') // Redirige si no tiene el rol necesario
-  } else {
-    next()
+  // Public routes that don't require authentication
+  const publicRoutes = ['/', '/auth/login', '/auth/register', '/auth/error', '/pages/notfound'];
+
+  if (publicRoutes.includes(to.path)) {
+    // If trying to access login/register while already authenticated, redirect to admin dashboard
+    if (isAuthenticated && (to.path === '/auth/login' || to.path === '/auth/register')) {
+      next('/admin');
+      return;
+    }
+    next();
+    return;
   }
-})
 
-export default router
+  // Check if route requires authentication
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      next('/auth/login');
+      return;
+    }
+
+    // Check for admin role requirement
+    if (to.meta.role === 'ADMIN' && !isAdmin) {
+      next('/auth/access');
+      return;
+    }
+  }
+
+  next();
+});
+
+export default router;
