@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ListSucursales from '@/modules/sucursal/ListSucursales.vue'
 import CreateSucursal from '@/modules/sucursal/CreateSucursal.vue'
-import ClienteView from '@/views/ClienteView.vue'
+import ClienteView from '../views/ClienteView.vue'
 import AppLayout from '../layout/AppLayout.vue'
 
 const router = createRouter({
@@ -24,8 +24,46 @@ const router = createRouter({
           name: 'empty',
           component: () => import('../views/pages/Empty.vue'),
         },
+        {
+          path: '/pages/crud',
+          name: 'crud',
+          component: () => import('../views/pages/Crud.vue'),
+        },
       ],
     },
+    /* --------------------------------------------------- start auth --------------------------------------------------- */
+    {
+      path: '/landing',
+      name: 'landing',
+      component: () => import('../views/pages/Landing.vue'),
+    },
+    {
+      path: '/pages/notfound',
+      name: 'notfound',
+      component: () => import('../views/pages/NotFound.vue'),
+    },
+
+    {
+      path: '/auth/login',
+      name: 'login',
+      component: () => import('../views/pages/auth/Login.vue'),
+    },
+    {
+      path: '/auth/access',
+      name: 'accessDenied',
+      component: () => import('../views/pages/auth/AccessDenied.vue'),
+    },
+    {
+      path: '/auth/error',
+      name: 'error',
+      component: () => import('../views/pages/auth/Error.vue'),
+    },
+    {
+      path: '/auth/register',
+      name: 'register',
+      component: () => import('../views/pages/auth/Register.vue'),
+    },
+    /* ---------------------------------------------------- end auth ---------------------------------------------------- */
     {
       path: '/',
       redirect: '/clientes',

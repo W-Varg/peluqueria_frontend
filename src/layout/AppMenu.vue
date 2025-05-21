@@ -7,16 +7,16 @@ const model = ref([
     label: 'Pages',
     icon: 'pi pi-fw pi-briefcase',
     items: [
-      //   {
-      //     label: 'Landing',
-      //     icon: 'pi pi-fw pi-globe',
-      //     to: '/landing',
-      //   },
-      //   {
-      //     label: 'Crud',
-      //     icon: 'pi pi-fw pi-pencil',
-      //     to: '/pages/crud',
-      //   },
+      {
+        label: 'Landing',
+        icon: 'pi pi-fw pi-globe',
+        to: '/landing',
+      },
+      {
+        label: 'Crud',
+        icon: 'pi pi-fw pi-pencil',
+        to: '/pages/crud',
+      },
       {
         label: 'Empty',
         icon: 'pi pi-fw pi-circle-off',
