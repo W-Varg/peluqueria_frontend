@@ -1,13 +1,7 @@
 import { defineStore } from 'pinia';
+import type { User, AuthResponse } from '@/types/auth';
 import axios from 'axios';
 import router from '@/router';
-
-interface User {
-  id: number;
-  email: string;
-  name: string;
-  rol: string;
-}
 
 interface AuthState {
   token: string | null;
@@ -46,40 +40,39 @@ export const useAuthStore = defineStore('auth', {
 
     async login(email: string, password: string) {
       try {
-        const response = await axios.post('/auth/login', {
+        const { data } = await axios.post<AuthResponse>('/api/auth/login', {
           email,
           password,
         });
 
-        const { access_token, user } = response.data;
-
-        this.token = access_token;
-        this.user = user;
-
-        // Store token and user data in localStorage
-        localStorage.setItem('token', access_token);
-        localStorage.setItem('user', JSON.stringify(user));
-
-        // Configure axios default headers
-        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-
-        // Redirect to admin dashboard after successful login
-        router.push({ name: 'admin-dashboard' });
-
-        return user;
+        this.setAuthData(data);
+        return data;
       } catch (error) {
-        console.error('Login error:', error);
-        return false;
+        this.clearAuth();
+        throw error;
       }
     },
 
-    logout() {
+    async logout() {
+      this.clearAuth();
+    },
+
+    setAuthData(authData: AuthResponse) {
+      this.token = authData.access_token;
+      this.user = authData.user;
+      localStorage.setItem('token', authData.access_token);
+      localStorage.setItem('user', JSON.stringify(authData.user));
+      
+      // Set the token in axios headers
+      axios.defaults.headers.common['Authorization'] = `Bearer ${authData.access_token}`;
+    },
+
+    clearAuth() {
       this.token = null;
       this.user = null;
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       delete axios.defaults.headers.common['Authorization'];
-      router.push('/');
     },
 
     initializeAuth() {
@@ -87,6 +80,6 @@ export const useAuthStore = defineStore('auth', {
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       }
-    },
+    }
   },
 });
