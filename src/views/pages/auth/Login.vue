@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import AppConfig from '@/layout/AppConfig.vue'
-import { useForm } from 'vee-validate'
-import * as yup from 'yup'
-import { useAuthStore } from '@/stores/auth'
-import { useToast } from 'primevue/usetoast'
+import { useRouter } from 'vue-router';
+import AppConfig from '@/layout/AppConfig.vue';
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { useAuthStore } from '@/stores/auth';
+import { useToast } from 'primevue/usetoast';
 
-const router = useRouter()
-const authStore = useAuthStore()
-const toast = useToast()
+const router = useRouter();
+const authStore = useAuthStore();
+const toast = useToast();
 
 const schema = yup.object({
   email: yup.string().required('Email is required').email('Must be a valid email'),
-  password: yup
-    .string()
-    .required('Password is required')
-    .min(8, 'Password must be at least 8 characters'),
-})
+  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),
+});
 
 const { handleSubmit, errors, values } = useForm({
   validationSchema: schema,
@@ -24,33 +21,31 @@ const { handleSubmit, errors, values } = useForm({
     email: 'cambiar@gmail.com',
     password: 'Cambiar123@',
   },
-})
+});
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    const success = await authStore.login(values.email, values.password)
+    const success = await authStore.login(values.email, values.password);
     if (success) {
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Login successful', life: 3000 })
-      router.push('/')
+      toast.add({ severity: 'success', summary: 'Success', detail: 'Login successful', life: 3000 });
+      router.push('/');
     } else {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid credentials', life: 3000 })
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid credentials', life: 3000 });
     }
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000 })
+    toast.add({ severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000 });
   }
-})
+});
 
 function navigateToDashboard() {
-  router.push('/')
+  router.push('/');
 }
 </script>
 
 <template>
   <div class="bg-surface-0 dark:bg-surface-900">
     <div class="flex items-center justify-between flex-col h-screen">
-      <div
-        class="flex flex-col items-center justify-center w-full md:w-4/12 h-full text-center py-12 px-6"
-      >
+      <div class="flex flex-col items-center justify-center w-full md:w-4/12 h-full text-center py-12 px-6">
         <a @click="navigateToDashboard" class="mb-12" style="cursor: pointer">
           <svg height="56" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -58,14 +53,7 @@ function navigateToDashboard() {
               fill="url(#paint0_linear)"
             />
             <defs>
-              <linearGradient
-                id="paint0_linear"
-                x1="3.33335"
-                y1="3.08442e-08"
-                x2="8.49995"
-                y2="20"
-                gradientUnits="userSpaceOnUse"
-              >
+              <linearGradient id="paint0_linear" x1="3.33335" y1="3.08442e-08" x2="8.49995" y2="20" gradientUnits="userSpaceOnUse">
                 <stop stop-color="var(--p-primary-400)" />
                 <stop offset="1" stop-color="var(--p-primary-700)" />
               </linearGradient>
@@ -100,9 +88,7 @@ function navigateToDashboard() {
           <small class="p-error" v-if="errors.password">{{ errors.password }}</small>
 
           <Button type="submit" label="Sign In" class="w-full mb-6"></Button>
-          <a href="#" class="font-medium text-sm text-surface-300 dark:text-surface-500"
-            >forget password?</a
-          >
+          <a href="#" class="font-medium text-sm text-surface-300 dark:text-surface-500">forget password?</a>
           <p class="font-medium text-surface-400 dark:text-surface-400 m-0 mt-12">
             Don't you have an account, <a href="#" class="text-primary cursor-pointer">sign up</a>
           </p>
@@ -110,12 +96,7 @@ function navigateToDashboard() {
       </div>
       <div class="flex flex-wrap items-center pb-20 px-6">
         <h4 class="m-0 mr-8" style="line-height: 22px">peluqueria</h4>
-        <h6
-          class="m-0 font-medium text-surface-300 dark:text-surface-500"
-          style="line-height: 17px"
-        >
-          Copyright Ⓒ PrimeTek Informatics
-        </h6>
+        <h6 class="m-0 font-medium text-surface-300 dark:text-surface-500" style="line-height: 17px">Copyright Ⓒ PrimeTek Informatics</h6>
       </div>
     </div>
   </div>

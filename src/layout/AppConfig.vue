@@ -1,32 +1,32 @@
 <script setup>
-import { useLayout } from '@/layout/composables/layout'
-import { $t, updatePreset, updateSurfacePalette } from '@primeuix/themes'
-import Aura from '@primeuix/themes/aura'
-import Lara from '@primeuix/themes/lara'
-import { ref } from 'vue'
+import { useLayout } from '@/layout/composables/layout';
+import { $t, updatePreset, updateSurfacePalette } from '@primeuix/themes';
+import Aura from '@primeuix/themes/aura';
+import Lara from '@primeuix/themes/lara';
+import { ref } from 'vue';
 
 defineProps({
   simple: {
     type: Boolean,
     default: false,
   },
-})
+});
 
-const { layoutState, layoutConfig, setMenuMode, isDarkTheme, toggleConfigSidebar } = useLayout()
+const { layoutState, layoutConfig, setMenuMode, isDarkTheme, toggleConfigSidebar } = useLayout();
 
 const presets = {
   Aura,
   Lara,
-}
-const presetOptions = ref(Object.keys(presets))
-const preset = ref(layoutConfig.preset)
+};
+const presetOptions = ref(Object.keys(presets));
+const preset = ref(layoutConfig.preset);
 const themeOptions = ref([
   { name: 'Light', value: false },
   { name: 'Dark', value: true },
-])
+]);
 
-const darkTheme = ref(layoutConfig.darkTheme)
-const menuMode = ref(layoutConfig.menuMode)
+const darkTheme = ref(layoutConfig.darkTheme);
+const menuMode = ref(layoutConfig.menuMode);
 
 const primaryColors = ref([
   { name: 'noir', palette: {} },
@@ -286,7 +286,7 @@ const primaryColors = ref([
       950: '#4c0519',
     },
   },
-])
+]);
 
 const surfaces = ref([
   {
@@ -425,27 +425,27 @@ const surfaces = ref([
       950: '#0c1920',
     },
   },
-])
+]);
 
 function toggleDarkMode() {
   if (!document.startViewTransition) {
-    executeDarkModeToggle()
+    executeDarkModeToggle();
 
-    return
+    return;
   }
 
-  document.startViewTransition(() => executeDarkModeToggle(event))
+  document.startViewTransition(() => executeDarkModeToggle(event));
 }
 
 function executeDarkModeToggle() {
-  layoutConfig.darkTheme = !layoutConfig.darkTheme
-  layoutConfig.menuTheme = isDarkTheme.value ? 'dark' : 'light'
+  layoutConfig.darkTheme = !layoutConfig.darkTheme;
+  layoutConfig.menuTheme = isDarkTheme.value ? 'dark' : 'light';
 
-  document.documentElement.classList.toggle('app-dark')
+  document.documentElement.classList.toggle('app-dark');
 }
 
 function getPresetExt() {
-  const color = primaryColors.value.find((c) => c.name === layoutConfig.primary)
+  const color = primaryColors.value.find((c) => c.name === layoutConfig.primary);
 
   if (color.name === 'noir') {
     return {
@@ -494,7 +494,7 @@ function getPresetExt() {
           },
         },
       },
-    }
+    };
   } else {
     return {
       semantic: {
@@ -530,38 +530,34 @@ function getPresetExt() {
           },
         },
       },
-    }
+    };
   }
 }
 
 function updateColors(type, color) {
   if (type === 'primary') {
-    layoutConfig.primary = color.name
+    layoutConfig.primary = color.name;
   } else if (type === 'surface') {
-    layoutConfig.surface = color.name
+    layoutConfig.surface = color.name;
   }
 
-  applyTheme(type, color)
+  applyTheme(type, color);
 }
 
 function applyTheme(type, color) {
   if (type === 'primary') {
-    updatePreset(getPresetExt())
+    updatePreset(getPresetExt());
   } else if (type === 'surface') {
-    updateSurfacePalette(color.palette)
+    updateSurfacePalette(color.palette);
   }
 }
 
 function onPresetChange() {
-  layoutConfig.preset = preset.value
-  const presetValue = presets[preset.value]
-  const surfacePalette = surfaces.value.find((s) => s.name === layoutConfig.surface)?.palette
+  layoutConfig.preset = preset.value;
+  const presetValue = presets[preset.value];
+  const surfacePalette = surfaces.value.find((s) => s.name === layoutConfig.surface)?.palette;
 
-  $t()
-    .preset(presetValue)
-    .preset(getPresetExt())
-    .surfacePalette(surfacePalette)
-    .use({ useDefaultOptions: true })
+  $t().preset(presetValue).preset(getPresetExt()).surfacePalette(surfacePalette).use({ useDefaultOptions: true });
 }
 </script>
 
@@ -624,12 +620,7 @@ function onPresetChange() {
       <div>
         <div class="flex flex-col gap-2">
           <span class="text-lg text-muted-color font-semibold">Presets</span>
-          <SelectButton
-            v-model="preset"
-            @change="onPresetChange"
-            :options="presetOptions"
-            :allowEmpty="false"
-          />
+          <SelectButton v-model="preset" @change="onPresetChange" :options="presetOptions" :allowEmpty="false" />
         </div>
       </div>
 
@@ -654,36 +645,18 @@ function onPresetChange() {
             <div class="flex flex-wrap flex-col gap-3">
               <div class="flex">
                 <div class="flex items-center gap-2 w-1/2">
-                  <RadioButton
-                    name="menuMode"
-                    value="static"
-                    v-model="menuMode"
-                    @update:modelValue="setMenuMode"
-                    inputId="static"
-                  ></RadioButton>
+                  <RadioButton name="menuMode" value="static" v-model="menuMode" @update:modelValue="setMenuMode" inputId="static"></RadioButton>
                   <label for="static">Static</label>
                 </div>
 
                 <div class="flex items-center gap-2 w-1/2">
-                  <RadioButton
-                    name="menuMode"
-                    value="overlay"
-                    v-model="menuMode"
-                    @update:modelValue="setMenuMode"
-                    inputId="overlay"
-                  ></RadioButton>
+                  <RadioButton name="menuMode" value="overlay" v-model="menuMode" @update:modelValue="setMenuMode" inputId="overlay"></RadioButton>
                   <label for="overlay">Overlay</label>
                 </div>
               </div>
               <div class="flex">
                 <div class="flex items-center gap-2 w-1/2">
-                  <RadioButton
-                    name="menuMode"
-                    value="slim"
-                    v-model="menuMode"
-                    @update:modelValue="setMenuMode"
-                    inputId="slim"
-                  ></RadioButton>
+                  <RadioButton name="menuMode" value="slim" v-model="menuMode" @update:modelValue="setMenuMode" inputId="slim"></RadioButton>
                   <label for="slim">Slim</label>
                 </div>
                 <div class="flex items-center gap-2 w-1/2">
@@ -699,23 +672,11 @@ function onPresetChange() {
               </div>
               <div class="flex">
                 <div class="flex items-center gap-2 w-1/2">
-                  <RadioButton
-                    name="menuMode"
-                    value="reveal"
-                    v-model="menuMode"
-                    @update:modelValue="setMenuMode"
-                    inputId="reveal"
-                  ></RadioButton>
+                  <RadioButton name="menuMode" value="reveal" v-model="menuMode" @update:modelValue="setMenuMode" inputId="reveal"></RadioButton>
                   <label for="reveal">Reveal</label>
                 </div>
                 <div class="flex items-center gap-2 w-1/2">
-                  <RadioButton
-                    name="menuMode"
-                    value="drawer"
-                    v-model="menuMode"
-                    @update:modelValue="setMenuMode"
-                    inputId="drawer"
-                  ></RadioButton>
+                  <RadioButton name="menuMode" value="drawer" v-model="menuMode" @update:modelValue="setMenuMode" inputId="drawer"></RadioButton>
                   <label for="drawer">Drawer</label>
                 </div>
               </div>

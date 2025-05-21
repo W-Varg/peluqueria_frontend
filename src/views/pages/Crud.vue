@@ -1,149 +1,145 @@
 <script setup>
-import { ProductService } from '@/service/ProductService'
-import { FilterMatchMode } from '@primevue/core/api'
-import { useToast } from 'primevue/usetoast'
-import { onMounted, ref } from 'vue'
+import { ProductService } from '@/service/ProductService';
+import { FilterMatchMode } from '@primevue/core/api';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref } from 'vue';
 
 onMounted(() => {
-  ProductService.getProducts().then((data) => (products.value = data))
-})
+  ProductService.getProducts().then((data) => (products.value = data));
+});
 
-const toast = useToast()
-const dt = ref()
-const products = ref()
-const productDialog = ref(false)
-const deleteProductDialog = ref(false)
-const deleteProductsDialog = ref(false)
-const product = ref({})
-const selectedProducts = ref()
+const toast = useToast();
+const dt = ref();
+const products = ref();
+const productDialog = ref(false);
+const deleteProductDialog = ref(false);
+const deleteProductsDialog = ref(false);
+const product = ref({});
+const selectedProducts = ref();
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-})
-const submitted = ref(false)
+});
+const submitted = ref(false);
 const statuses = ref([
   { label: 'INSTOCK', value: 'instock' },
   { label: 'LOWSTOCK', value: 'lowstock' },
   { label: 'OUTOFSTOCK', value: 'outofstock' },
-])
+]);
 
 function formatCurrency(value) {
-  if (value) return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-  return
+  if (value) return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  return;
 }
 
 function openNew() {
-  product.value = {}
-  submitted.value = false
-  productDialog.value = true
+  product.value = {};
+  submitted.value = false;
+  productDialog.value = true;
 }
 
 function hideDialog() {
-  productDialog.value = false
-  submitted.value = false
+  productDialog.value = false;
+  submitted.value = false;
 }
 
 function saveProduct() {
-  submitted.value = true
+  submitted.value = true;
 
   if (product?.value.name?.trim()) {
     if (product.value.id) {
-      product.value.inventoryStatus = product.value.inventoryStatus.value
-        ? product.value.inventoryStatus.value
-        : product.value.inventoryStatus
-      products.value[findIndexById(product.value.id)] = product.value
+      product.value.inventoryStatus = product.value.inventoryStatus.value ? product.value.inventoryStatus.value : product.value.inventoryStatus;
+      products.value[findIndexById(product.value.id)] = product.value;
       toast.add({
         severity: 'success',
         summary: 'Successful',
         detail: 'Product Updated',
         life: 3000,
-      })
+      });
     } else {
-      product.value.id = createId()
-      product.value.code = createId()
-      product.value.image = 'product-placeholder.svg'
-      product.value.inventoryStatus = product.value.inventoryStatus
-        ? product.value.inventoryStatus.value
-        : 'INSTOCK'
-      products.value.push(product.value)
+      product.value.id = createId();
+      product.value.code = createId();
+      product.value.image = 'product-placeholder.svg';
+      product.value.inventoryStatus = product.value.inventoryStatus ? product.value.inventoryStatus.value : 'INSTOCK';
+      products.value.push(product.value);
       toast.add({
         severity: 'success',
         summary: 'Successful',
         detail: 'Product Created',
         life: 3000,
-      })
+      });
     }
 
-    productDialog.value = false
-    product.value = {}
+    productDialog.value = false;
+    product.value = {};
   }
 }
 
 function editProduct(prod) {
-  product.value = { ...prod }
-  productDialog.value = true
+  product.value = { ...prod };
+  productDialog.value = true;
 }
 
 function confirmDeleteProduct(prod) {
-  product.value = prod
-  deleteProductDialog.value = true
+  product.value = prod;
+  deleteProductDialog.value = true;
 }
 
 function deleteProduct() {
-  products.value = products.value.filter((val) => val.id !== product.value.id)
-  deleteProductDialog.value = false
-  product.value = {}
-  toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 })
+  products.value = products.value.filter((val) => val.id !== product.value.id);
+  deleteProductDialog.value = false;
+  product.value = {};
+  toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
 }
 
 function findIndexById(id) {
-  let index = -1
+  let index = -1;
   for (let i = 0; i < products.value.length; i++) {
     if (products.value[i].id === id) {
-      index = i
-      break
+      index = i;
+      break;
     }
   }
 
-  return index
+  return index;
 }
 
 function createId() {
-  let id = ''
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let id = '';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   for (let i = 0; i < 5; i++) {
-    id += chars.charAt(Math.floor(Math.random() * chars.length))
+    id += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return id
+  return id;
 }
 
 function exportCSV() {
-  dt.value.exportCSV()
+  dt.value.exportCSV();
 }
 
 function confirmDeleteSelected() {
-  deleteProductsDialog.value = true
+  deleteProductsDialog.value = true;
 }
 
 function deleteSelectedProducts() {
-  products.value = products.value.filter((val) => !selectedProducts.value.includes(val))
-  deleteProductsDialog.value = false
-  selectedProducts.value = null
-  toast.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 })
+  products.value = products.value.filter((val) => !selectedProducts.value.includes(val));
+  deleteProductsDialog.value = false;
+  selectedProducts.value = null;
+  toast.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
 }
 
 function getStatusLabel(status) {
   switch (status) {
     case 'INSTOCK':
-      return 'success'
+      return 'success';
 
     case 'LOWSTOCK':
-      return 'warn'
+      return 'warn';
 
     case 'OUTOFSTOCK':
-      return 'danger'
+      return 'danger';
 
     default:
-      return null
+      return null;
   }
 }
 </script>
@@ -153,13 +149,7 @@ function getStatusLabel(status) {
     <div class="card">
       <Toolbar class="mb-6">
         <template #start>
-          <Button
-            label="New"
-            icon="pi pi-plus"
-            severity="secondary"
-            class="mr-2"
-            @click="openNew"
-          />
+          <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
           <Button
             label="Delete"
             icon="pi pi-trash"
@@ -170,12 +160,7 @@ function getStatusLabel(status) {
         </template>
 
         <template #end>
-          <Button
-            label="Export"
-            icon="pi pi-upload"
-            severity="secondary"
-            @click="exportCSV($event)"
-          />
+          <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
         </template>
       </Toolbar>
 
@@ -229,39 +214,19 @@ function getStatusLabel(status) {
         </Column>
         <Column field="inventoryStatus" header="Status" sortable style="min-width: 12rem">
           <template #body="slotProps">
-            <Tag
-              :value="slotProps.data.inventoryStatus"
-              :severity="getStatusLabel(slotProps.data.inventoryStatus)"
-            />
+            <Tag :value="slotProps.data.inventoryStatus" :severity="getStatusLabel(slotProps.data.inventoryStatus)" />
           </template>
         </Column>
         <Column :exportable="false" style="min-width: 12rem">
           <template #body="slotProps">
-            <Button
-              icon="pi pi-pencil"
-              outlined
-              rounded
-              class="mr-2"
-              @click="editProduct(slotProps.data)"
-            />
-            <Button
-              icon="pi pi-trash"
-              outlined
-              rounded
-              severity="danger"
-              @click="confirmDeleteProduct(slotProps.data)"
-            />
+            <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editProduct(slotProps.data)" />
+            <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteProduct(slotProps.data)" />
           </template>
         </Column>
       </DataTable>
     </div>
 
-    <Dialog
-      v-model:visible="productDialog"
-      :style="{ width: '450px' }"
-      header="Product Details"
-      :modal="true"
-    >
+    <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Product Details" :modal="true">
       <div class="flex flex-col gap-6">
         <img
           v-if="product.image"
@@ -271,26 +236,12 @@ function getStatusLabel(status) {
         />
         <div>
           <label for="name" class="block font-bold mb-3">Name</label>
-          <InputText
-            id="name"
-            v-model.trim="product.name"
-            required="true"
-            autofocus
-            :invalid="submitted && !product.name"
-            fluid
-          />
+          <InputText id="name" v-model.trim="product.name" required="true" autofocus :invalid="submitted && !product.name" fluid />
           <small v-if="submitted && !product.name" class="text-red-500">Name is required.</small>
         </div>
         <div>
           <label for="description" class="block font-bold mb-3">Description</label>
-          <Textarea
-            id="description"
-            v-model="product.description"
-            required="true"
-            rows="3"
-            cols="20"
-            fluid
-          />
+          <Textarea id="description" v-model="product.description" required="true" rows="3" cols="20" fluid />
         </div>
         <div>
           <label for="inventoryStatus" class="block font-bold mb-3">Inventory Status</label>
@@ -308,39 +259,19 @@ function getStatusLabel(status) {
           <span class="block font-bold mb-4">Category</span>
           <div class="grid grid-cols-12 gap-4">
             <div class="flex items-center gap-2 col-span-6">
-              <RadioButton
-                id="category1"
-                v-model="product.category"
-                name="category"
-                value="Accessories"
-              />
+              <RadioButton id="category1" v-model="product.category" name="category" value="Accessories" />
               <label for="category1">Accessories</label>
             </div>
             <div class="flex items-center gap-2 col-span-6">
-              <RadioButton
-                id="category2"
-                v-model="product.category"
-                name="category"
-                value="Clothing"
-              />
+              <RadioButton id="category2" v-model="product.category" name="category" value="Clothing" />
               <label for="category2">Clothing</label>
             </div>
             <div class="flex items-center gap-2 col-span-6">
-              <RadioButton
-                id="category3"
-                v-model="product.category"
-                name="category"
-                value="Electronics"
-              />
+              <RadioButton id="category3" v-model="product.category" name="category" value="Electronics" />
               <label for="category3">Electronics</label>
             </div>
             <div class="flex items-center gap-2 col-span-6">
-              <RadioButton
-                id="category4"
-                v-model="product.category"
-                name="category"
-                value="Fitness"
-              />
+              <RadioButton id="category4" v-model="product.category" name="category" value="Fitness" />
               <label for="category4">Fitness</label>
             </div>
           </div>
@@ -349,14 +280,7 @@ function getStatusLabel(status) {
         <div class="grid grid-cols-12 gap-4">
           <div class="col-span-6">
             <label for="price" class="block font-bold mb-3">Price</label>
-            <InputNumber
-              id="price"
-              v-model="product.price"
-              mode="currency"
-              currency="USD"
-              locale="en-US"
-              fluid
-            />
+            <InputNumber id="price" v-model="product.price" mode="currency" currency="USD" locale="en-US" fluid />
           </div>
           <div class="col-span-6">
             <label for="quantity" class="block font-bold mb-3">Quantity</label>
@@ -371,12 +295,7 @@ function getStatusLabel(status) {
       </template>
     </Dialog>
 
-    <Dialog
-      v-model:visible="deleteProductDialog"
-      :style="{ width: '450px' }"
-      header="Confirm"
-      :modal="true"
-    >
+    <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
       <div class="flex items-center gap-4">
         <i class="pi pi-exclamation-triangle !text-3xl" />
         <span v-if="product"
@@ -390,12 +309,7 @@ function getStatusLabel(status) {
       </template>
     </Dialog>
 
-    <Dialog
-      v-model:visible="deleteProductsDialog"
-      :style="{ width: '450px' }"
-      header="Confirm"
-      :modal="true"
-    >
+    <Dialog v-model:visible="deleteProductsDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
       <div class="flex items-center gap-4">
         <i class="pi pi-exclamation-triangle !text-3xl" />
         <span v-if="product">Are you sure you want to delete the selected products?</span>

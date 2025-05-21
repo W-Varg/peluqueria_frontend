@@ -9,4 +9,4 @@ export interface Cliente {
 }
 
 export interface ClienteCreate extends Omit<Cliente, 'id' | 'createdAt' | 'updatedAt'> {}
-export interface ClienteUpdate extends Partial<ClienteCreate> {} 
+export interface ClienteUpdate extends Partial<ClienteCreate> {}

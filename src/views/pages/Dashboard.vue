@@ -6,7 +6,7 @@ import axios from 'axios';
 const toast = useToast();
 const stats = ref({
   sucursales: 0,
-  clientes: 0
+  clientes: 0,
 });
 
 const loading = ref(true);
@@ -15,19 +15,19 @@ async function loadStats() {
   try {
     const [sucursalesRes, clientesRes] = await Promise.all([
       axios.get('http://192.168.100.44:3000/sucursales'),
-      axios.get('http://192.168.100.44:3000/clientes')
+      axios.get('http://192.168.100.44:3000/clientes'),
     ]);
 
     stats.value = {
       sucursales: sucursalesRes.data.length,
-      clientes: clientesRes.data.length
+      clientes: clientesRes.data.length,
     };
   } catch (error) {
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: 'Error al cargar las estadísticas',
-      life: 3000
+      life: 3000,
     });
   } finally {
     loading.value = false;
@@ -84,7 +84,7 @@ onMounted(() => {
       <div class="card h-full">
         <h5>Actividad Reciente</h5>
         <p>Panel de actividad reciente y notificaciones</p>
-        
+
         <!-- Aquí puedes agregar más contenido como una lista de actividades recientes -->
         <div class="flex flex-column gap-3">
           <div class="flex align-items-center gap-3">
@@ -94,7 +94,7 @@ onMounted(() => {
               <p class="text-500 mt-1 mb-0">Todos los servicios están activos</p>
             </div>
           </div>
-          
+
           <div class="flex align-items-center gap-3">
             <i class="pi pi-info-circle text-blue-500 text-xl"></i>
             <div>
@@ -117,7 +117,7 @@ onMounted(() => {
               Activo
             </span>
           </div>
-          
+
           <div class="flex justify-content-between align-items-center">
             <span class="text-900 font-medium">Base de Datos</span>
             <span class="inline-flex align-items-center py-1 px-2 bg-green-100 text-green-700 border-round">
@@ -155,4 +155,4 @@ onMounted(() => {
 .border-round {
   border-radius: 12px;
 }
-</style> 
+</style>

@@ -1,35 +1,30 @@
 <script setup>
-import AppSidebar from '@/layout/AppSidebar.vue'
-import { useLayout } from '@/layout/composables/layout'
-import { useAuthStore } from '@/stores/auth'
-import { useRouter } from 'vue-router'
-import { useToast } from 'primevue/usetoast'
+import AppSidebar from '@/layout/AppSidebar.vue';
+import { useLayout } from '@/layout/composables/layout';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 
-const { layoutState, isHorizontal, toggleMenu } = useLayout()
-const authStore = useAuthStore()
-const router = useRouter()
-const toast = useToast()
+const { layoutState, isHorizontal, toggleMenu } = useLayout();
+const authStore = useAuthStore();
+const router = useRouter();
+const toast = useToast();
 
 function onTopbarItemClick() {
-  document.body.click()
+  document.body.click();
 }
 
 function handleLogout() {
-  authStore.logout()
-  toast.add({ severity: 'success', summary: 'Success', detail: 'Logged out successfully', life: 3000 })
-  router.push('/')
+  authStore.logout();
+  toast.add({ severity: 'success', summary: 'Success', detail: 'Logged out successfully', life: 3000 });
+  router.push('/');
 }
 </script>
 
 <template>
   <div class="layout-topbar">
     <div class="topbar-start">
-      <Button
-        ref="menubutton"
-        type="button"
-        class="topbar-menubutton p-trigger duration-300"
-        @click="toggleMenu"
-      >
+      <Button ref="menubutton" type="button" class="topbar-menubutton p-trigger duration-300" @click="toggleMenu">
         <i class="pi pi-bars"></i>
       </Button>
     </div>

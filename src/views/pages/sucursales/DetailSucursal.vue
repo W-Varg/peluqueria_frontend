@@ -1,69 +1,64 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import {
-  getSucursalById,
-  updateSucursal,
-  deleteSucursal,
-  getEmpleadosBySucursal,
-} from '@/services/sucursal.api'
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { getSucursalById, updateSucursal, deleteSucursal, getEmpleadosBySucursal } from '@/services/sucursal.api';
 
-const route = useRoute()
-const router = useRouter()
-const id = Number(route.params.id)
-const sucursal = ref<any>(null)
-const empleados = ref<any[]>([])
-const loading = ref(false)
-const error = ref('')
-const isEditing = ref(false)
-const editForm = ref({ nombre: '', direccion: '', telefono: '' })
+const route = useRoute();
+const router = useRouter();
+const id = Number(route.params.id);
+const sucursal = ref<any>(null);
+const empleados = ref<any[]>([]);
+const loading = ref(false);
+const error = ref('');
+const isEditing = ref(false);
+const editForm = ref({ nombre: '', direccion: '', telefono: '' });
 
 const fetchData = async () => {
   try {
-    loading.value = true
-    sucursal.value = await getSucursalById(id)
-    empleados.value = await getEmpleadosBySucursal(id)
-    Object.assign(editForm.value, sucursal.value)
+    loading.value = true;
+    sucursal.value = await getSucursalById(id);
+    empleados.value = await getEmpleadosBySucursal(id);
+    Object.assign(editForm.value, sucursal.value);
   } catch (err) {
-    error.value = 'Error al cargar los datos de la sucursal'
-    console.error('Error:', err)
+    error.value = 'Error al cargar los datos de la sucursal';
+    console.error('Error:', err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleUpdate = async () => {
   try {
-    loading.value = true
-    await updateSucursal(id, editForm.value)
-    await fetchData()
-    isEditing.value = false
+    loading.value = true;
+    await updateSucursal(id, editForm.value);
+    await fetchData();
+    isEditing.value = false;
   } catch (err) {
-    error.value = 'Error al actualizar la sucursal'
-    console.error('Error:', err)
+    error.value = 'Error al actualizar la sucursal';
+    console.error('Error:', err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleDelete = async () => {
   if (confirm('¿Estás seguro de eliminar esta sucursal?')) {
     try {
-      loading.value = true
-      await deleteSucursal(id)
-      router.push('/sucursales')
+      loading.value = true;
+      await deleteSucursal(id);
+      router.push('/sucursales');
     } catch (err) {
-      error.value = 'Error al eliminar la sucursal'
-      console.error('Error:', err)
+      error.value = 'Error al eliminar la sucursal';
+      console.error('Error:', err);
     } finally {
-      loading.value = false
+      loading.value = false;
     }
   }
-}
+};
 
 onMounted(() => {
-  fetchData()
-})
+  fetchData();
+});
 </script>
 
 <template>

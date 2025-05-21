@@ -27,23 +27,11 @@
       <Column field="apellido" header="Apellido" sortable></Column>
       <Column field="email" header="Email" sortable></Column>
       <Column field="telefono" header="Teléfono"></Column>
-      <Column header="Acciones" :exportable="false" style="min-width:8rem">
+      <Column header="Acciones" :exportable="false" style="min-width: 8rem">
         <template #body="slotProps">
           <div class="flex items-center gap-2">
-            <Button
-              icon="pi pi-pencil"
-              outlined
-              rounded
-              class="mr-2"
-              @click="$emit('editar', slotProps.data)"
-            />
-            <Button
-              icon="pi pi-trash"
-              outlined
-              rounded
-              severity="danger"
-              @click="$emit('eliminar', slotProps.data)"
-            />
+            <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="$emit('editar', slotProps.data)" />
+            <Button icon="pi pi-trash" outlined rounded severity="danger" @click="$emit('eliminar', slotProps.data)" />
           </div>
         </template>
       </Column>
@@ -69,4 +57,4 @@ defineEmits<{
 const filters = ref({
   global: { value: null, matchMode: 'contains' },
 });
-</script> 
+</script>

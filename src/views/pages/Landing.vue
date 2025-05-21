@@ -12,21 +12,26 @@ import { onMounted, ref } from 'vue';
 const menu = ref(null);
 
 onMounted(() => {
-    menu.value = document.getElementById('menu');
+  menu.value = document.getElementById('menu');
 });
 </script>
 
 <template>
-    <div :class="(menu?.classList.contains('hidden') && menu?.classList.contains('absolute') ? 'h-auto ' : 'overflow-hidden h-screen  md:h-auto ') + 'landing-wrapper'">
-        <TopbarWidget />
-        <HeroWidget />
-        <FeaturesWidget />
-        <CustomizationsWidget />
-        <AppsWidget />
-        <PricingWidget />
-        <FooterWidget />
-    </div>
-    <ScrollTop></ScrollTop>
+  <div
+    :class="
+      (menu?.classList.contains('hidden') && menu?.classList.contains('absolute') ? 'h-auto ' : 'overflow-hidden h-screen  md:h-auto ') +
+      'landing-wrapper'
+    "
+  >
+    <TopbarWidget />
+    <HeroWidget />
+    <FeaturesWidget />
+    <CustomizationsWidget />
+    <AppsWidget />
+    <PricingWidget />
+    <FooterWidget />
+  </div>
+  <ScrollTop></ScrollTop>
 
-    <AppConfig simple />
+  <AppConfig simple />
 </template>

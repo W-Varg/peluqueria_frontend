@@ -1,20 +1,8 @@
 <template>
   <div class="container mx-auto p-4">
-    <ClienteTable
-      :clientes="clientes"
-      :loading="loading"
-      @nuevo="handleNuevo"
-      @editar="handleEditar"
-      @eliminar="handleEliminar"
-    />
+    <ClienteTable :clientes="clientes" :loading="loading" @nuevo="handleNuevo" @editar="handleEditar" @eliminar="handleEliminar" />
 
-    <ClienteForm
-      :visible="dialogVisible"
-      :cliente="selectedCliente"
-      :loading="saving"
-      @close="closeDialog"
-      @submit="handleSubmit"
-    />
+    <ClienteForm :visible="dialogVisible" :cliente="selectedCliente" :loading="saving" @close="closeDialog" @submit="handleSubmit" />
 
     <Toast />
     <ConfirmDialog />
@@ -128,4 +116,4 @@ const closeDialog = () => {
 onMounted(() => {
   loadClientes();
 });
-</script> 
+</script>

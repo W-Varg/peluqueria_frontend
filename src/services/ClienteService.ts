@@ -26,5 +26,5 @@ export const ClienteService = {
 
   delete: async (id: number): Promise<void> => {
     await axios.delete(`${API_URL}/cliente/${id}`);
-  }
-}; 
+  },
+};
