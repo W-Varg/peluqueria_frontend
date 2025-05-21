@@ -30,7 +30,26 @@ const router = createRouter({
           },
           component: () => import('../views/pages/sucursales/SucursalesList.vue'),
         },
-
+        {
+          path: 'empleados',
+          name: 'admin-empleados',
+          meta: {
+            breadcrumb: ['Gestión de Empleados'],
+            requiresAuth: true,
+            role: 'ADMIN',
+          },
+          component: () => import('../views/pages/empleados/EmpleadosList.vue'),
+        },
+        {
+          path: 'servicios',
+          name: 'admin-servicios',
+          meta: {
+            breadcrumb: ['Gestión de Servicios'],
+            requiresAuth: true,
+            role: 'ADMIN',
+          },
+          component: () => import('../views/pages/servicios/ServiciosList.vue'),
+        },
         // {
         //   path: '/sucursales/:id',
         //   name: 'sucursal-detail',

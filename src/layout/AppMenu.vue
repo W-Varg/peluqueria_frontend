@@ -22,6 +22,18 @@ const model = ref([
         to: '/admin/sucursales',
         visible: isAdmin,
       },
+      {
+        label: 'Empleados',
+        icon: 'pi pi-fw pi-users',
+        to: '/admin/empleados',
+        visible: isAdmin,
+      },
+      {
+        label: 'Servicios',
+        icon: 'pi pi-fw pi-list',
+        to: '/admin/servicios',
+        visible: isAdmin,
+      },
       // {
       //   label: 'Clientes',
       //   icon: 'pi pi-fw pi-users',
