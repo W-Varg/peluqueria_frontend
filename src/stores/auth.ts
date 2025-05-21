@@ -14,6 +14,12 @@ interface AuthState {
   user: User | null;
 }
 
+interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     token: localStorage.getItem('token'),
@@ -26,6 +32,18 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
+    async register(data: RegisterData) {
+      try {
+        const response = await axios.post('/auth/register', data);
+        return response.data;
+      } catch (error: any) {
+        if (error.response?.data?.message) {
+          throw new Error(error.response.data.message);
+        }
+        throw new Error('Error durante el registro');
+      }
+    },
+
     async login(email: string, password: string) {
       try {
         const response = await axios.post('/auth/login', {
@@ -46,9 +64,9 @@ export const useAuthStore = defineStore('auth', {
         axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 
         // Redirect to admin dashboard after successful login
-        router.push('/admin/empty');
+        router.push({ name: 'admin-dashboard' });
 
-        return true;
+        return user;
       } catch (error) {
         console.error('Login error:', error);
         return false;

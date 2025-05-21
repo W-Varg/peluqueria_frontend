@@ -1,5 +1,92 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import ServicioForm from './ServicioForm.vue';
+import DetailServicio from './DetailServicio.vue';
+import { CrudService } from '@/service/ServicioService';
+
+const toast = useToast();
+const dt = ref(null);
+const servicios = ref([]);
+const servicioDialog = ref(false);
+const deleteServicioDialog = ref(false);
+const detailDialog = ref(false);
+const servicio = ref({});
+const filters = ref({});
+
+onMounted(() => {
+  loadServicios();
+});
+
+const loadServicios = async () => {
+  try {
+    // TODO: Implement API call
+    const data = await CrudService.getServices();
+    servicios.value = data;
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar servicios', life: 3000 });
+  }
+};
+
+const openNew = () => {
+  servicio.value = {
+    nombre: '',
+    descripcion: '',
+    duracion: null,
+    precio: null,
+    estado: true,
+  };
+  servicioDialog.value = true;
+};
+
+const hideDialog = () => {
+  servicioDialog.value = false;
+};
+
+const saveServicio = async (data) => {
+  try {
+    // TODO: Implement API call
+    await loadServicios();
+    servicioDialog.value = false;
+    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Servicio guardado', life: 3000 });
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar servicio', life: 3000 });
+  }
+};
+
+const editServicio = (data) => {
+  servicio.value = { ...data };
+  servicioDialog.value = true;
+};
+
+const confirmDeleteServicio = (data) => {
+  servicio.value = data;
+  deleteServicioDialog.value = true;
+};
+
+const deleteServicio = async () => {
+  try {
+    // TODO: Implement API call
+    await loadServicios();
+    deleteServicioDialog.value = false;
+    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Servicio eliminado', life: 3000 });
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Error al eliminar servicio', life: 3000 });
+  }
+};
+
+const viewDetails = (data) => {
+  servicio.value = data;
+  detailDialog.value = true;
+};
+
+const getSeverity = (estado) => {
+  return estado ? 'success' : 'danger';
+};
+</script>
+
 <template>
-  <div class="grid">
+  <div class="card">
     <div class="col-12">
       <div class="card">
         <Toast />
@@ -10,6 +97,15 @@
             </div>
           </template>
         </Toolbar>
+
+        <!-- <Toolbar class="mb-6">
+          <template #start>
+            <Button label="Actualizar" icon="pi pi-refresh" severity="secondary" @click="loadReservations" />
+          </template>
+          <template #end>
+            <Button label="Nueva Reserva" icon="pi pi-plus" severity="primary" class="mr-2" @click="refReservationForm?.openDialog()" />
+          </template>
+        </Toolbar> -->
 
         <DataTable
           ref="dt"
@@ -82,88 +178,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import ServicioForm from './ServicioForm.vue';
-import DetailServicio from './DetailServicio.vue';
-
-const toast = useToast();
-const dt = ref(null);
-const servicios = ref([]);
-const servicioDialog = ref(false);
-const deleteServicioDialog = ref(false);
-const detailDialog = ref(false);
-const servicio = ref({});
-const filters = ref({});
-
-onMounted(() => {
-  loadServicios();
-});
-
-const loadServicios = async () => {
-  try {
-    // TODO: Implement API call
-    servicios.value = [];
-  } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar servicios', life: 3000 });
-  }
-};
-
-const openNew = () => {
-  servicio.value = {
-    nombre: '',
-    descripcion: '',
-    duracion: null,
-    precio: null,
-    estado: true,
-  };
-  servicioDialog.value = true;
-};
-
-const hideDialog = () => {
-  servicioDialog.value = false;
-};
-
-const saveServicio = async (data) => {
-  try {
-    // TODO: Implement API call
-    await loadServicios();
-    servicioDialog.value = false;
-    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Servicio guardado', life: 3000 });
-  } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar servicio', life: 3000 });
-  }
-};
-
-const editServicio = (data) => {
-  servicio.value = { ...data };
-  servicioDialog.value = true;
-};
-
-const confirmDeleteServicio = (data) => {
-  servicio.value = data;
-  deleteServicioDialog.value = true;
-};
-
-const deleteServicio = async () => {
-  try {
-    // TODO: Implement API call
-    await loadServicios();
-    deleteServicioDialog.value = false;
-    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Servicio eliminado', life: 3000 });
-  } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Error al eliminar servicio', life: 3000 });
-  }
-};
-
-const viewDetails = (data) => {
-  servicio.value = data;
-  detailDialog.value = true;
-};
-
-const getSeverity = (estado) => {
-  return estado ? 'success' : 'danger';
-};
-</script>

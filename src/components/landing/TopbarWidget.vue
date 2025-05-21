@@ -2,8 +2,10 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import LogoWidget from './LogoWidget.vue';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 const menu = ref(null);
 
@@ -21,6 +23,14 @@ function scrollToElement(elementId) {
 }
 const navigateLogin = () => {
   router.push('/auth/login');
+};
+const navigateDashboard = () => {
+  router.push({ name: 'admin-dashboard' });
+};
+
+const logout = () => {
+  authStore.logout();
+  navigateLogin();
 };
 </script>
 
@@ -141,7 +151,38 @@ const navigateLogin = () => {
         </a>
       </li>
 
-      <li class="flex items-center">
+      <template v-if="authStore.isAuthenticated">
+        <li class="flex items-center">
+          <Button
+            type="button"
+            v-styleclass="{
+              selector: '@grandparent',
+              enterFromClass: 'hidden',
+              enterActiveClass: 'animate-fadein',
+              leaveToClass: 'hidden',
+            }"
+            label="Admin"
+            class="m-0 mt-4 md:mt-0 ml-4 md:ml-8"
+            @click="navigateDashboard"
+          ></Button>
+        </li>
+
+        <li class="flex items-center">
+          <Button
+            type="button"
+            v-styleclass="{
+              selector: '@grandparent',
+              enterFromClass: 'hidden',
+              enterActiveClass: 'animate-fadein',
+              leaveToClass: 'hidden',
+            }"
+            label="Logout"
+            class="m-0 mt-4 md:mt-0 ml-4 md:ml-8"
+            @click="logout"
+          ></Button>
+        </li>
+      </template>
+      <li v-else class="flex items-center">
         <Button
           type="button"
           v-styleclass="{

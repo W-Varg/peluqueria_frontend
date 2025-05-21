@@ -1,22 +1,11 @@
-<template>
-  <div class="container mx-auto p-4">
-    <ClienteTable :clientes="clientes" :loading="loading" @nuevo="handleNuevo" @editar="handleEditar" @eliminar="handleEliminar" />
-
-    <ClienteForm :visible="dialogVisible" :cliente="selectedCliente" :loading="saving" @close="closeDialog" @submit="handleSubmit" />
-
-    <Toast />
-    <ConfirmDialog />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import type { Cliente, ClienteCreate } from '@/interfaces/Cliente';
 import { ClienteService } from '@/services/ClienteService';
-import ClienteTable from '@/components/cliente/ClienteTable.vue';
-import ClienteForm from '@/components/cliente/ClienteForm.vue';
+import ClienteTable from './ClienteTable.vue';
+import ClienteForm from './ClienteForm.vue';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -31,7 +20,7 @@ const loadClientes = async () => {
   try {
     loading.value = true;
     clientes.value = await ClienteService.getAll();
-  } catch (error) {
+  } catch {
     toast.add({
       severity: 'error',
       summary: 'Error',
@@ -68,7 +57,7 @@ const handleEliminar = (cliente: Cliente) => {
           detail: 'Cliente eliminado correctamente',
           life: 3000,
         });
-      } catch (error) {
+      } catch {
         toast.add({
           severity: 'error',
           summary: 'Error',
@@ -96,7 +85,7 @@ const handleSubmit = async (data: ClienteCreate) => {
       detail: `Cliente ${selectedCliente.value?.id ? 'actualizado' : 'creado'} correctamente`,
       life: 3000,
     });
-  } catch (error) {
+  } catch {
     toast.add({
       severity: 'error',
       summary: 'Error',
@@ -117,3 +106,14 @@ onMounted(() => {
   loadClientes();
 });
 </script>
+
+<template>
+  <div class="container mx-auto p-4">
+    <ClienteTable :clientes="clientes" :loading="loading" @nuevo="handleNuevo" @editar="handleEditar" @eliminar="handleEliminar" />
+
+    <ClienteForm :visible="dialogVisible" :cliente="selectedCliente" :loading="saving" @close="closeDialog" @submit="handleSubmit" />
+
+    <Toast />
+    <ConfirmDialog />
+  </div>
+</template>

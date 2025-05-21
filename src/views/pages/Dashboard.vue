@@ -40,7 +40,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="grid">
+  <div class="card">
     <div class="col-12">
       <div class="card">
         <h5>Dashboard</h5>

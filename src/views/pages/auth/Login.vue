@@ -23,12 +23,17 @@ const { handleSubmit, errors, values } = useForm({
   },
 });
 
+const navigateToRegister = () => {
+  router.push({ name: 'register' });
+};
+
 const onSubmit = handleSubmit(async (values) => {
   try {
     const success = await authStore.login(values.email, values.password);
     if (success) {
       toast.add({ severity: 'success', summary: 'Success', detail: 'Login successful', life: 3000 });
-      router.push('/');
+      if (success.rol === 'ADMIN') router.push({ name: 'admin-dashboard' });
+      else router.push('/');
     } else {
       toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid credentials', life: 3000 });
     }
@@ -90,7 +95,7 @@ function navigateToDashboard() {
           <Button type="submit" label="Sign In" class="w-full mb-6"></Button>
           <a href="#" class="font-medium text-sm text-surface-300 dark:text-surface-500">forget password?</a>
           <p class="font-medium text-surface-400 dark:text-surface-400 m-0 mt-12">
-            Don't you have an account, <a href="#" class="text-primary cursor-pointer">sign up</a>
+            Don't you have an account, <a class="text-primary cursor-pointer" @click="navigateToRegister">Registrarse</a>
           </p>
         </form>
       </div>

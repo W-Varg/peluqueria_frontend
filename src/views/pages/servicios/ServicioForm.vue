@@ -1,3 +1,30 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const props = defineProps({
+  servicio: {
+    type: Object,
+    required: true,
+  },
+});
+
+const emit = defineEmits(['save', 'close']);
+
+const servicioLocal = ref({ ...props.servicio });
+const submitted = ref(false);
+const estadoOptions = ref([
+  { label: 'Activo', value: true },
+  { label: 'Inactivo', value: false },
+]);
+
+const saveServicio = () => {
+  submitted.value = true;
+
+  if (servicioLocal.value.nombre && servicioLocal.value.descripcion && servicioLocal.value.duracion && servicioLocal.value.precio) {
+    emit('save', servicioLocal.value);
+  }
+};
+</script>
 <template>
   <form @submit.prevent="saveServicio" class="p-fluid">
     <div class="field">
@@ -57,31 +84,3 @@
     </div>
   </form>
 </template>
-
-<script setup>
-import { ref } from 'vue';
-
-const props = defineProps({
-  servicio: {
-    type: Object,
-    required: true,
-  },
-});
-
-const emit = defineEmits(['save', 'close']);
-
-const servicioLocal = ref({ ...props.servicio });
-const submitted = ref(false);
-const estadoOptions = ref([
-  { label: 'Activo', value: true },
-  { label: 'Inactivo', value: false },
-]);
-
-const saveServicio = () => {
-  submitted.value = true;
-
-  if (servicioLocal.value.nombre && servicioLocal.value.descripcion && servicioLocal.value.duracion && servicioLocal.value.precio) {
-    emit('save', servicioLocal.value);
-  }
-};
-</script>

@@ -29,9 +29,21 @@ const model = ref([
         visible: isAdmin,
       },
       {
+        label: 'Clientes',
+        icon: 'pi pi-fw pi-users',
+        to: '/admin/clientes',
+        visible: isAdmin,
+      },
+      {
         label: 'Servicios',
         icon: 'pi pi-fw pi-list',
         to: '/admin/servicios',
+        visible: isAdmin,
+      },
+      {
+        label: 'Reservas',
+        icon: 'pi pi-fw pi-calendar',
+        to: '/admin/reservas',
         visible: isAdmin,
       },
       // {

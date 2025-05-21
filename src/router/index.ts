@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-// import ClienteView from '../views/ClienteView.vue';
 import AppLayout from '../layout/AppLayout.vue';
 import { useAuthStore } from '@/stores/auth';
 
@@ -19,6 +18,16 @@ const router = createRouter({
             requiresAuth: true,
           },
           component: () => import('../views/pages/Dashboard.vue'),
+        },
+        {
+          path: 'clientes',
+          name: 'admin-clientes',
+          meta: {
+            breadcrumb: ['Gestión de Clientes'],
+            requiresAuth: true,
+            role: 'ADMIN',
+          },
+          component: () => import('../views/pages/cliente/ClientesList.vue'),
         },
         {
           path: 'sucursales',
@@ -49,6 +58,16 @@ const router = createRouter({
             role: 'ADMIN',
           },
           component: () => import('../views/pages/servicios/ServiciosList.vue'),
+        },
+        {
+          path: 'reservas',
+          name: 'admin-reservas',
+          meta: {
+            breadcrumb: ['Gestión de Reservas'],
+            requiresAuth: true,
+            role: 'ADMIN',
+          },
+          component: () => import('../views/pages/reservations/ReservationsList.vue'),
         },
         // {
         //   path: '/sucursales/:id',

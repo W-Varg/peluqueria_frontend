@@ -1,14 +1,78 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
 import { useRouter } from 'vue-router';
+import { useField, useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { useAuthStore } from '@/stores/auth';
+import { useToast } from 'primevue/usetoast';
 
 const router = useRouter();
-const confirmed = ref(null);
-const value = ref(null);
 
-function navigateToDashboard() {
-  router.push('/');
+const authStore = useAuthStore();
+const toast = useToast();
+
+const schema = yup.object().shape({
+  name: yup
+    .string()
+    .required('El nombre es requerido')
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(50, 'El nombre no puede tener más de 50 caracteres'),
+  email: yup.string().required('El correo electrónico es requerido').email('Ingrese un correo electrónico válido'),
+  password: yup
+    .string()
+    .required('La contraseña es requerida')
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .matches(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula')
+    .matches(/[a-z]/, 'La contraseña debe contener al menos una letra minúscula')
+    .matches(/[0-9]/, 'La contraseña debe contener al menos un número'),
+  confirmPassword: yup
+    .string()
+    .required('La confirmación de contraseña es requerida')
+    .oneOf([yup.ref('password')], 'Las contraseñas no coinciden'),
+  terms: yup.boolean().oneOf([true], 'Debe aceptar los términos y condiciones'),
+});
+
+const { handleSubmit, errors, resetForm } = useForm({
+  validationSchema: schema,
+});
+
+const { value: name } = useField<string>('name');
+const { value: email } = useField<string>('email');
+const { value: password } = useField<string>('password');
+const { value: confirmPassword } = useField<string>('confirmPassword');
+const { value: terms } = useField<boolean>('terms');
+const loading = ref(false);
+
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    loading.value = true;
+    const { ...userData } = values;
+    await authStore.register(userData);
+    toast.add({
+      severity: 'success',
+      summary: '¡Registro exitoso!',
+      detail: 'Tu cuenta ha sido creada correctamente',
+      life: 3000,
+    });
+    router.push('/auth/login');
+  } catch (error) {
+    console.log(error);
+
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.message || 'Ha ocurrido un error durante el registro',
+      life: 3000,
+    });
+  } finally {
+    loading.value = false;
+  }
+});
+
+function navigateToLogin() {
+  resetForm();
+  router.push({ name: 'login' });
 }
 </script>
 
@@ -16,7 +80,7 @@ function navigateToDashboard() {
   <div class="bg-surface-0 dark:bg-surface-900">
     <div class="flex items-center justify-between flex-col h-screen">
       <div class="flex flex-col items-center justify-center w-full md:w-4/12 h-full text-center py-12 px-6">
-        <a @click="navigateToDashboard" class="mb-12" style="cursor: pointer">
+        <a @click="navigateToLogin" class="mb-12" style="cursor: pointer">
           <svg height="56" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M0 0H6.00019V3.82345L17 1.66667V6.66667L6.00019 8.82345V10.4901L17 8.33333V13.3333L6.00019 15.4901V20H0V0Z"
@@ -34,20 +98,25 @@ function navigateToDashboard() {
           <div class="text-surface-900 dark:text-surface-0 text-xl font-bold mb-2">Register</div>
           <span class="text-surface-600 dark:text-surface-200 font-medium">Let's get started</span>
         </div>
+
         <div class="flex flex-col">
           <IconField class="w-full mb-6">
             <InputIcon class="pi pi-user" />
             <InputText
               id="username"
+              v-model="name"
+              :class="{ 'p-invalid': errors.name }"
               type="text"
               class="w-full md:w-[25rem] text-surface-500 dark:text-surface-400 bg-surface-50 dark:bg-surface-800 border-surface-200 dark:border-surface-600"
-              placeholder="Username"
+              placeholder="nombre"
             />
           </IconField>
           <IconField class="w-full mb-6">
             <InputIcon class="pi pi-envelope" />
             <InputText
               id="email"
+              v-model="email"
+              :class="{ 'p-invalid': errors.email }"
               type="text"
               class="w-full md:w-[25rem] text-surface-500 dark:text-surface-400 bg-surface-50 dark:bg-surface-800 border-surface-200 dark:border-surface-600"
               placeholder="Email"
@@ -58,25 +127,44 @@ function navigateToDashboard() {
             <Password
               id="password"
               placeholder="Password"
-              v-model="value"
+              v-model="password"
+              :class="{ 'p-invalid': errors.password }"
               class="w-full"
               :inputStyle="{ paddingLeft: '2.5rem' }"
               inputClass="w-full md:w-[25rem] text-surface-500 dark:text-surface-400 bg-surface-50 dark:bg-surface-800 border-surface-200 dark:border-surface-600"
               toggleMask
             ></Password>
           </IconField>
+
+          <IconField class="w-full mb-6">
+            <InputIcon class="pi pi-lock z-20" />
+            <Password
+              id="confirmpassword"
+              placeholder="Confirm Password"
+              v-model="confirmPassword"
+              :class="{ 'p-invalid': errors.confirmPassword }"
+              class="w-full"
+              :inputStyle="{ paddingLeft: '2.5rem' }"
+              inputClass="w-full md:w-[25rem] text-surface-500 dark:text-surface-400 bg-surface-50 dark:bg-surface-800 border-surface-200 dark:border-surface-600"
+              toggleMask
+            ></Password>
+          </IconField>
+
           <div class="mb-6 flex flex-wrap items-center">
-            <Checkbox name="checkbox" value="val" v-model="confirmed" class="mr-2" :binary="true"></Checkbox>
+            <Checkbox name="checkbox" value="val" v-model="terms" class="mr-2" :binary="true"></Checkbox>
             <label for="checkbox" class="text-surface-900 dark:text-surface-0 font-medium mr-2"> I have read the</label>
             <a class="text-surface-600 dark:text-surface-200 hover:text-primary cursor-pointer">Terms and Conditions</a>
           </div>
-          <Button label="Sign Up" class="w-full mb-6" @click="navigateToDashboard"></Button>
+          <Button label="Registrarse" class="w-full mb-6" @click="onSubmit"></Button>
           <span class="font-medium text-surface-600 dark:text-surface-200"
             >Already have an account?
-            <a class="font-semibold cursor-pointer text-surface-900 dark:text-surface-0 hover:text-primary transition-colors duration-300"
-              >Login</a
-            ></span
-          >
+            <a
+              @click="navigateToLogin"
+              class="font-semibold cursor-pointer text-surface-900 dark:text-surface-0 hover:text-primary transition-colors duration-300"
+            >
+              Login
+            </a>
+          </span>
         </div>
       </div>
       <div class="flex flex-wrap items-center pb-20 px-6">

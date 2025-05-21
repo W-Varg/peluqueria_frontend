@@ -1,72 +1,113 @@
-<template>
-  <form @submit.prevent="saveEmpleado" class="p-fluid">
-    <div class="field">
-      <label for="nombre">Nombre</label>
-      <InputText id="nombre" v-model.trim="empleadoLocal.nombre" required autofocus :class="{ 'p-invalid': submitted && !empleadoLocal.nombre }" />
-      <small class="p-error" v-if="submitted && !empleadoLocal.nombre">El nombre es requerido.</small>
-    </div>
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useField, useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { useToast } from 'primevue/usetoast';
+import { toTypedSchema } from '@vee-validate/yup';
+import { EmpleadoService } from '@/service/EmpleadoService';
+import type { Empleado } from '@/types/empleado';
 
-    <div class="field">
-      <label for="apellido">Apellido</label>
-      <InputText id="apellido" v-model.trim="empleadoLocal.apellido" required :class="{ 'p-invalid': submitted && !empleadoLocal.apellido }" />
-      <small class="p-error" v-if="submitted && !empleadoLocal.apellido">El apellido es requerido.</small>
-    </div>
+const toast = useToast();
+const dialog = ref(false);
 
-    <div class="field">
-      <label for="telefono">Teléfono</label>
-      <InputText id="telefono" v-model.trim="empleadoLocal.telefono" required :class="{ 'p-invalid': submitted && !empleadoLocal.telefono }" />
-      <small class="p-error" v-if="submitted && !empleadoLocal.telefono">El teléfono es requerido.</small>
-    </div>
-
-    <div class="field">
-      <label for="email">Email</label>
-      <InputText id="email" v-model.trim="empleadoLocal.email" required type="email" :class="{ 'p-invalid': submitted && !empleadoLocal.email }" />
-      <small class="p-error" v-if="submitted && !empleadoLocal.email">El email es requerido.</small>
-    </div>
-
-    <div class="field">
-      <label for="estado">Estado</label>
-      <Dropdown
-        id="estado"
-        v-model="empleadoLocal.estado"
-        :options="estadoOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Seleccione un estado"
-      />
-    </div>
-
-    <div class="flex justify-content-end mt-4">
-      <Button label="Cancelar" icon="pi pi-times" class="p-button-text" @click="$emit('close')" />
-      <Button label="Guardar" icon="pi pi-check" class="p-button-text" type="submit" />
-    </div>
-  </form>
-</template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-
-const props = defineProps({
-  empleado: {
-    type: Object,
-    required: true,
-  },
+const schema = yup.object({
+  id: yup.number().optional(),
+  nombre: yup.string().required('El nombre es requerido'),
+  apellido: yup.string().required('El apellido es requerido'),
+  telefono: yup.string().required('El teléfono es requerido'),
+  email: yup.string().required('El email es requerido'),
+  estado: yup.boolean().required('El estado es requerido'),
 });
 
-const emit = defineEmits(['save', 'close']);
+const { handleSubmit, resetForm, setValues, errors } = useForm({
+  validationSchema: toTypedSchema(schema),
+});
 
-const empleadoLocal = ref({ ...props.empleado });
-const submitted = ref(false);
-const estadoOptions = ref([
-  { label: 'Activo', value: true },
-  { label: 'Inactivo', value: false },
-]);
+const { value: nombre } = useField<string>('nombre');
+const { value: apellido } = useField<string>('apellido');
+const { value: telefono } = useField<string>('telefono');
+const { value: email } = useField<string>('email');
+const { value: estado } = useField<boolean>('estado');
 
-const saveEmpleado = () => {
-  submitted.value = true;
+const emit = defineEmits(['saved']);
 
-  if (empleadoLocal.value.nombre && empleadoLocal.value.apellido && empleadoLocal.value.telefono && empleadoLocal.value.email) {
-    emit('save', empleadoLocal.value);
+const openDialog = (item: Empleado | null = null) => {
+  if (item) {
+    setValues({ id: item.id, nombre: item.nombre, email: item.email, telefono: item.telefono });
   }
+  dialog.value = true;
 };
+
+const hideDialog = () => {
+  dialog.value = false;
+  resetForm();
+};
+
+const onSubmit = handleSubmit(async (formData: Empleado) => {
+  try {
+    let result: Empleado;
+    if (formData.id) {
+      result = await EmpleadoService.updateEmpleado(formData.id, formData);
+      toast.add({ severity: 'success', summary: 'Éxito', detail: 'Sucursal Actualizada', life: 3000 });
+    } else {
+      result = await EmpleadoService.createEmpleado(formData);
+      toast.add({ severity: 'success', summary: 'Éxito', detail: 'Sucursal Creada', life: 3000 });
+    }
+    emit('saved', result);
+
+    hideDialog();
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string } } };
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: err.response?.data?.message || 'Error al guardar la sucursal',
+      life: 3000,
+    });
+  }
+});
+
+defineExpose({ openDialog });
 </script>
+
+<template>
+  <div>
+    <Dialog v-model:visible="dialog" :style="{ width: '450px' }" header="Detalles de Sucursal" :modal="true" class="p-fluid">
+      <span class="text-surface-500 dark:text-surface-400 block mb-8">Update your information.</span>
+      <div class="flex items-center gap-4 mb-8">
+        <label for="nombre">Nombre</label>
+        <InputText id="nombre" v-model="nombre" autofocus :class="{ 'p-invalid': errors.nombre }" />
+        <small class="p-error" v-if="errors.nombre">{{ errors.nombre }}</small>
+      </div>
+
+      <div class="flex items-center gap-4 mb-8">
+        <label for="apellido">Apellido</label>
+        <InputText id="apellido" v-model="apellido" :class="{ 'p-invalid': errors.apellido }" />
+        <small class="p-error" v-if="errors.nombre">{{ errors.nombre }}</small>
+      </div>
+
+      <div class="flex items-center gap-4 mb-8">
+        <label for="telefono">Teléfono</label>
+        <InputText id="telefono" v-model="telefono" :class="{ 'p-invalid': errors.telefono }" />
+        <small class="p-error" v-if="errors.nombre">{{ errors.nombre }}</small>
+      </div>
+
+      <div class="flex items-center gap-4 mb-8">
+        <label for="email">Email</label>
+        <InputText id="email" v-model="email" type="email" :class="{ 'p-invalid': errors.email }" />
+        <small class="p-error" v-if="errors.nombre">{{ errors.nombre }}</small>
+      </div>
+
+      <div class="flex items-center gap-4 mb-8">
+        <label for="estado">Estado</label>
+        <InputSwitch id="estado" v-model="estado" :class="{ 'p-invalid': errors.estado }" />
+        <small class="p-error" v-if="errors.nombre">{{ errors.nombre }}</small>
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <Button label="Cancelar" icon="pi pi-times" text @click="hideDialog" />
+        <Button label="Guardar" icon="pi pi-check" @click="onSubmit" />
+      </div>
+    </Dialog>
+  </div>
+</template>
