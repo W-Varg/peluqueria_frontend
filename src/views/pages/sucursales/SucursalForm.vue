@@ -68,8 +68,8 @@ defineExpose({ openDialog });
 
 <template>
   <div>
-    <Dialog v-model:visible="sucursalDialog" :style="{ width: '450px' }" header="Detalles de Sucursal" :modal="true" class="p-fluid">
-      <span class="text-surface-500 dark:text-surface-400 block mb-8">Update your information.</span>
+    <Dialog v-model:visible="sucursalDialog" :style="{ width: '450px' }" header="Sucursal" :modal="true" class="p-fluid">
+      <span class="text-surface-500 dark:text-surface-400 block mb-8">information.</span>
       <div class="flex items-center gap-4 mb-8">
         <label for="nombre">Nombre</label>
         <InputText id="nombre" v-model="nombre" :class="{ 'p-invalid': errors.nombre }" autofocus />

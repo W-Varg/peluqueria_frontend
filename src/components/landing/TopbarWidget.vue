@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import LogoWidget from './LogoWidget.vue';
@@ -13,7 +13,7 @@ function navigateHome() {
   router.push('/');
 }
 
-function scrollToElement(elementId) {
+function scrollToElement(elementId: string) {
   setTimeout(() => {
     const element = document.getElementById(elementId);
     if (element) {
@@ -22,7 +22,7 @@ function scrollToElement(elementId) {
   }, 200);
 }
 const navigateLogin = () => {
-  router.push('/auth/login');
+  router.push({ name: 'login' });
 };
 const navigateDashboard = () => {
   router.push({ name: 'admin-dashboard' });

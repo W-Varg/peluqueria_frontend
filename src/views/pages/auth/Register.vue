@@ -55,7 +55,7 @@ const onSubmit = handleSubmit(async (values) => {
       detail: 'Tu cuenta ha sido creada correctamente',
       life: 3000,
     });
-    router.push('/auth/login');
+    router.push({ name: 'login' });
   } catch (error) {
     console.log(error);
 

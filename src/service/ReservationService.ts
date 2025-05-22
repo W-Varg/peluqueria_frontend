@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type Reservation } from '@/types/reservation';
+import { type CreateReservaDto, type Reservation } from '@/types/reservation';
 
 export const ReservationService = {
   baseURL: 'http://192.168.100.44:3000/reservas',
@@ -25,6 +25,11 @@ export const ReservationService = {
 
   async deleteReservation(id: number) {
     const response = await axios.delete(this.baseURL + `/${id}`);
+    return response.data;
+  },
+
+  async createReservationPublic(reservation: CreateReservaDto) {
+    const response = await axios.post(this.baseURL + '/public', reservation);
     return response.data;
   },
 };

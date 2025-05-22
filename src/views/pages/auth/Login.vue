@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import AppConfig from '@/layout/AppConfig.vue';
+import AppConfig from '../../../layout/AppConfig.vue';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { useAuthStore } from '@/stores/auth';
@@ -18,8 +18,8 @@ const schema = yup.object({
 const { handleSubmit, errors, values } = useForm({
   validationSchema: schema,
   initialValues: {
-    email: 'cambiar@gmail.com',
-    password: 'Cambiar123@',
+    email: 'cliente@gmail.com',
+    password: 'Cliente123@',
   },
 });
 

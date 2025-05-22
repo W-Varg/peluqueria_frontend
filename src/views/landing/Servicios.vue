@@ -4,11 +4,13 @@ import type { Servicio } from '@/types/servicio';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
+import CreateReservaForm from './CreateReservaForm.vue';
 
 const servicios = ref<Servicio[]>([]);
 const loading = ref(true);
 const authStore = useAuthStore();
 const router = useRouter();
+const createReservaFormRef = ref();
 
 const fetchServicios = async () => {
   try {
@@ -23,10 +25,10 @@ const fetchServicios = async () => {
 
 const handleReservar = (servicio: Servicio) => {
   if (!authStore.isAuthenticated) {
-    router.push('/auth/login');
+    router.push({ name: 'login' });
     return;
   }
-  // Implementar lógica de reserva
+  createReservaFormRef.value?.openDialog(servicio);
 };
 
 onMounted(() => {
@@ -45,25 +47,24 @@ onMounted(() => {
       <ProgressSpinner />
     </div>
 
-    <div v-else class="grid">
+    <div v-else class="card">
       <div v-for="servicio in servicios" :key="servicio._id" class="col-12 md:col-6 lg:col-4 p-3">
         <div class="surface-card p-4 border-round shadow-2">
-          <div class="flex flex-column h-full">
-            <div class="mb-3">
-              <span class="text-xl font-bold text-900">{{ servicio._nombre }}</span>
-              <div class="text-2xl text-primary font-bold mt-2">
-                {{ new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(Number(servicio._precio)) }}
+          <div class="flex h-full">
+            <div class="flex justify-content-between flex-grow-1">
+              <div class="flex flex-col gap-3 mx-5">
+                <span class="text-xl font-bold text-900">{{ servicio._nombre }}</span>
+                <p class="text-700 line-height-3 mb-4 flex-grow-1">
+                  {{ servicio._descripcion }}
+                </p>
               </div>
+              <div class="text-2xl text-primary font-bold mt-2">{{ servicio._precio?._monto }} {{ servicio._precio?._moneda }}</div>
             </div>
-
-            <p class="text-700 line-height-3 mb-4 flex-grow-1">
-              {{ servicio._descripcion }}
-            </p>
 
             <div class="flex align-items-center justify-content-between">
               <span class="text-600">
                 <i class="pi pi-clock mr-2"></i>
-                {{ servicio._duracion }} minutos
+                {{ servicio._duracion?._minutos }} minutos
               </span>
               <Button label="Reservar" @click="handleReservar(servicio)" :outlined="!authStore.isAuthenticated" />
             </div>
@@ -71,6 +72,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    <CreateReservaForm ref="createReservaFormRef" @saved="fetchServicios" />
 
     <div v-if="!loading && servicios.length === 0" class="text-center p-4">
       <p class="text-700">No hay servicios disponibles en este momento.</p>

@@ -4,11 +4,11 @@ import { useAuthStore } from '@/stores/auth';
 export const authGuard = (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
   const authStore = useAuthStore();
   const isAuthenticated = authStore.isAuthenticated;
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const isAdminRoute = to.matched.some(record => record.meta.requiresAdmin);
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const isAdminRoute = to.matched.some((record) => record.meta.requiresAdmin);
 
   if (requiresAuth && !isAuthenticated) {
-    next('/auth/login');
+    next({ name: 'login' });
     return;
   }
 
@@ -18,4 +18,4 @@ export const authGuard = (to: RouteLocationNormalized, from: RouteLocationNormal
   }
 
   next();
-}; 
+};
