@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import AppConfig from '../../../layout/AppConfig.vue';
-import { useForm } from 'vee-validate';
+import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from 'primevue/usetoast';
@@ -15,13 +15,18 @@ const schema = yup.object({
   password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),
 });
 
-const { handleSubmit, errors, values } = useForm({
+const { handleSubmit, errors } = useForm({
   validationSchema: schema,
   initialValues: {
     email: 'cliente@gmail.com',
     password: 'Cliente123@',
+    // email: 'cambiar@gmail.com',
+    // password: 'Cambiar123@',
   },
 });
+
+const { value: email } = useField<string>('email');
+const { value: password } = useField<string>('password');
 
 const navigateToRegister = () => {
   router.push({ name: 'register' });
@@ -30,14 +35,15 @@ const navigateToRegister = () => {
 const onSubmit = handleSubmit(async (values) => {
   try {
     const success = await authStore.login(values.email, values.password);
+
     if (success) {
       toast.add({ severity: 'success', summary: 'Success', detail: 'Login successful', life: 3000 });
-      if (success.rol === 'ADMIN') router.push({ name: 'admin-dashboard' });
-      else router.push('/');
+      if (success.user.rol === 'ADMIN') router.push({ name: 'dashboard' });
+      else router.push({ name: 'mis-reservas' });
     } else {
       toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid credentials', life: 3000 });
     }
-  } catch (error) {
+  } catch {
     toast.add({ severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000 });
   }
 });
@@ -69,7 +75,7 @@ function navigateToDashboard() {
           <IconField class="w-full mb-6">
             <InputIcon class="pi pi-envelope" />
             <InputText
-              v-model="values.email"
+              v-model="email"
               id="email"
               type="text"
               class="w-full md:w-[25rem] text-surface-500 dark:text-surface-400 bg-surface-50 dark:bg-surface-800 border-surface-200 dark:border-surface-600"
@@ -82,7 +88,7 @@ function navigateToDashboard() {
           <IconField class="w-full mb-6">
             <InputIcon class="pi pi-lock" />
             <InputText
-              v-model="values.password"
+              v-model="password"
               id="password"
               type="password"
               class="w-full md:w-[25rem] text-surface-500 dark:text-surface-400 bg-surface-50 dark:bg-surface-800 border-surface-200 dark:border-surface-600"

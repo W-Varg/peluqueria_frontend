@@ -1,45 +1,117 @@
-# frontend
+# Peluquería Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Frontend para el sistema de gestión de peluquería desarrollado con Vue.js.
 
-## Recommended IDE Setup
+## Enlaces del Proyecto
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- Frontend: [https://github.com/W-Varg/peluqueria_frontend.git](https://github.com/W-Varg/peluqueria_frontend.git)
+- Backend: [https://github.com/W-Varg/peluqueria_backend.git](https://github.com/W-Varg/peluqueria_backend.git)
 
-## Type Support for `.vue` Imports in TS
+## Requisitos Mínimos
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Node.js 20.x o superior
+- Yarn 1.22.x o superior
+- Vue.js 3.x
+- Vite 5.x
 
-## Customize configuration
+## Tecnologías Principales
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- Vue.js 3
+- Vite
+- Vue Router
+- Pinia (State Management)
+- Tailwind CSS
+- Axios
 
-## Project Setup
+## Instalación
 
-```sh
-npm install
+1. Clonar el repositorio:
+
+```bash
+git clone https://github.com/W-Varg/peluqueria_frontend.git
+cd peluqueria_frontend
 ```
 
-### Compile and Hot-Reload for Development
+2. Instalar dependencias:
 
-```sh
-npm run dev
+```bash
+yarn install
 ```
 
-### Type-Check, Compile and Minify for Production
+3. Configurar variables de entorno:
 
-```sh
-npm run build
+```bash
+cp .env.example .env
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+Editar el archivo `.env` con tus configuraciones.
 
-```sh
-npm run test:unit
+4. Iniciar el servidor de desarrollo:
+
+```bash
+yarn dev
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## Scripts Disponibles
 
-```sh
-npm run lint
-```
+- `yarn dev`: Inicia el servidor de desarrollo
+- `yarn build`: Compila el proyecto para producción
+- `yarn preview`: Vista previa de la build de producción
+- `yarn lint`: Ejecuta el linter
+- `yarn format`: Formatea el código
+- `yarn test:unit`: Ejecuta tests unitarios
+
+## Estado de Docker Compose
+
+⚠️ **Nota Importante**: Actualmente, la configuración de Docker Compose presenta problemas y no está funcionando correctamente. Se recomienda ejecutar el proyecto localmente siguiendo los pasos de instalación manual mencionados arriba.
+
+Los problemas conocidos incluyen:
+
+- Problemas de conexión con el backend
+- Conflictos con las variables de entorno
+- Problemas de hot-reload en desarrollo
+
+Estamos trabajando en resolver estos problemas. Por ahora, se recomienda el desarrollo local.
+
+## Características Principales
+
+- 📱 Diseño responsive
+- 🎨 Interfaz moderna con Tailwind CSS
+- 🔐 Autenticación de usuarios
+- 📅 Gestión de citas
+- 👥 Gestión de clientes
+- 💇‍♀️ Catálogo de servicios
+
+## Rutas Principales
+
+- `/`: Página de inicio
+- `/auth/login`: Inicio de sesión
+- `/mis-reservas`: Mis citas
+- `/auth/register`: Registro de usuario
+- `/servicios`: Servicios disponibles
+
+## credenciales de prueba
+
+    ### CLIENTE
+
+    - Correo: cliente@gmail.com
+    - Contraseña: Cliente123@
+
+    ### ADMINISTRADOR
+
+    - Correo: cambiar@gmail.com
+    - Contraseña: Cambiar123@
+
+## Contribución
+
+Si deseas contribuir al proyecto, por favor:
+
+1. Haz fork del repositorio
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
