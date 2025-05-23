@@ -14,8 +14,8 @@ const loading = ref(true);
 async function loadStats() {
   try {
     const [sucursalesRes, clientesRes] = await Promise.all([
-      axios.get('http://192.168.100.44:3000/sucursales'),
-      axios.get('http://192.168.100.44:3000/clientes'),
+      axios.get('http://localhost:3000/sucursales'),
+      axios.get('http://localhost:3000/clientes'),
     ]);
 
     stats.value = {

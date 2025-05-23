@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const SucursalService = {
-  baseURL: 'http://192.168.100.44:3000/sucursales',
+  baseURL: 'http://localhost:3000/sucursales',
 
   async getSucursales() {
     const response = await axios.get(this.baseURL);

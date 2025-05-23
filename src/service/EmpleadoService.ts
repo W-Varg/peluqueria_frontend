@@ -2,7 +2,7 @@ import type { Empleado } from '@/types/empleado';
 import axios from 'axios';
 
 export const EmpleadoService = {
-  baseURL: 'http://192.168.100.44:3000/empleados',
+  baseURL: 'http://localhost:3000/empleados',
 
   async getEmpleados() {
     const response = await axios.get(this.baseURL);

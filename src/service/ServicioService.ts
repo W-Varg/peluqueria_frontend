@@ -2,7 +2,7 @@ import type { ServicioDto } from '@/types/servicio';
 import axios from 'axios';
 
 export const CrudService = {
-  baseURL: 'http://192.168.100.44:3000/servicios',
+  baseURL: 'http://localhost:3000/servicios',
 
   async getServices() {
     const response = await axios.get(this.baseURL);

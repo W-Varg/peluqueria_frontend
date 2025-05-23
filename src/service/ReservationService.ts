@@ -2,7 +2,7 @@ import axios from 'axios';
 import { type CreateReservaDto, type Reservation } from '@/types/reservation';
 
 export const ReservationService = {
-  baseURL: 'http://192.168.100.44:3000/reservas',
+  baseURL: 'http://localhost:3000/reservas',
   async getReservations() {
     const response = await axios.get(this.baseURL + '');
     return response.data;
